@@ -1,26 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-cormorant: "Cormorant Garamond", "Times New Roman", serif;
+  --font-jakarta: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-cinzel: "Cinzel", "Times New Roman", serif;
+
+  --color-forest-dark: #04160d;
+  --color-forest: #072618;
+  --color-forest-light: #0d3824;
+  --color-forest-surface: #12432c;
+  --color-gold: #e5a110;
+  --color-gold-light: #f5b92e;
+  --color-gold-dark: #b87d00;
+  --color-gold-dim: rgba(229, 161, 16, 0.15);
+  --color-cream: #faf7f2;
+  --color-sand: #efe8dc;
+  --color-charcoal: #151715;
+  --color-muted: #6e706c;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+  --font-serif: var(--font-cormorant), "Times New Roman", serif;
+  --font-sans: var(--font-jakarta), system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-cinzel), var(--font-cormorant), serif;
+
+  --color-forest-dark: var(--color-forest-dark);
+  --color-forest: var(--color-forest);
+  --color-forest-light: var(--color-forest-light);
+  --color-forest-surface: var(--color-forest-surface);
+  --color-gold: var(--color-gold);
+  --color-gold-light: var(--color-gold-light);
+  --color-gold-dark: var(--color-gold-dark);
+  --color-gold-dim: var(--color-gold-dim);
+  --color-cream: var(--color-cream);
+  --color-sand: var(--color-sand);
+  --color-charcoal: var(--color-charcoal);
+  --color-muted: var(--color-muted);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-sans);
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #04160d;
+}
+::-webkit-scrollbar-thumb {
+  background: #e5a110;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f5b92e;
+}
+
+/* Subtle Gold Thread Shimmer */
+@keyframes threadShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.gold-thread-border {
+  position: relative;
+}
+.gold-thread-border::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #e5a110 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: threadShimmer 4s infinite linear;
+}
+
+.gold-glow {
+  box-shadow: 0 0 25px rgba(229, 161, 16, 0.25);
+}
+
+.forest-card-shadow {
+  box-shadow: 0 20px 40px -15px rgba(4, 22, 13, 0.15);
+}
+
+/* Subtle weave grid background pattern */
+.bg-weave-pattern {
+  background-image: radial-gradient(rgba(229, 161, 16, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-dark-weave {
+  background-image: radial-gradient(rgba(229, 161, 16, 0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Selection Color */
+::selection {
+  background-color: #072618;
+  color: #f5b92e;
 }
