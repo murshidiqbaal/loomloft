@@ -86,6 +86,96 @@ export interface OrderItem {
 
 export const INITIAL_PRODUCTS: Product[] = [
   {
+    id: "prod-saree-1",
+    name: "Banarasi Katan Pure Silk Saree with Kadwa Floral Zari",
+    slug: "banarasi-katan-pure-silk-saree-kadwa-floral-zari",
+    sku: "LL-SR-01",
+    price: 21990,
+    originalPrice: 27990,
+    discount: "21% OFF",
+    category: "Ethnic Wear",
+    collection: "Heritage Series",
+    fabric: "100% Pure Katan Mulberry Silk with 24k Gold Zari",
+    origin: "Varanasi, Uttar Pradesh",
+    weaveTechnique: "Master Kadwa Handloom Technique (No Float Backing)",
+    description: "An imperial Banarasi drape woven from pure degummed mulberry silk with exquisite Kadwa floral butis hand-engraved with fine gold zari. Accompanied by an unstitched contrast silk blouse piece.",
+    story: {
+      thread: "Triple-twisted 20/22 denier Katan silk warp with real gold-coated silver electroplated zari thread.",
+      craft: "Each floral motif is separately locked into the warp without floating threads on the reverse.",
+      originCluster: "Madanpura & Chowk Handloom Guilds, Varanasi",
+      artisanNote: "Handcrafted by 4th generation master weaver Ansari and his team over 140 uninterrupted loom hours.",
+      careInstructions: [
+        "Dry clean only by heritage saree conservators",
+        "Wrap in breathable organic mulmul muslin",
+        "Air in gentle morning shade every 3 months"
+      ]
+    },
+    colors: [
+      { name: "Forest Emerald", hex: "#06291A" },
+      { name: "Royal Gold", hex: "#D4AF37" },
+      { name: "Ruby Crimson", hex: "#73151E" }
+    ],
+    sizes: ["Free Size (6.3m with Blouse)"],
+    stock: 9,
+    rating: 5.0,
+    reviewCount: 46,
+    images: [
+      "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=80"
+    ],
+    isFeatured: true,
+    isNewArrival: true,
+    isBestSeller: true,
+    badge: "Masterpiece Saree",
+    tags: ["Saree", "Banarasi", "Pure Silk", "Kadwa", "Gold Zari"]
+  },
+  {
+    id: "prod-nighty-1",
+    name: "Mulberry Pure Silk Slumber Nighty & Loungewear Slip",
+    slug: "mulberry-pure-silk-slumber-nighty-loungewear-slip",
+    sku: "LL-NT-01",
+    price: 6490,
+    originalPrice: 8490,
+    discount: "23% OFF",
+    category: "Women",
+    collection: "Ethereal Weaves",
+    fabric: "22 Momme Grade-6A Mulberry Silk",
+    origin: "Mysore Silk Clusters, Karnataka",
+    weaveTechnique: "Low-tension Charmeuse Silk Loom Weave",
+    description: "An exquisite silk nighty and lounge slip tailored from 22 Momme Grade-6A Mulberry silk. Featuring a fluid cowl neck, adjustable gold-tipped bias straps, and French seam construction for effortless overnight comfort.",
+    story: {
+      thread: "Reeled from organically fed Mysore silkworm cocoons, offering hypoallergenic natural amino acids.",
+      craft: "Cut on the true bias to cascade smoothly across natural curves without cling or friction.",
+      originCluster: "Mysore Artisan Silk Guild",
+      artisanNote: "Treated with herbal natural softening enzyme bath without chemical finishing agents.",
+      careInstructions: [
+        "Delicate cold hand wash with pH-neutral silk detergent",
+        "Do not wring; wrap in terry towel to extract moisture",
+        "Cool iron on reverse side while slightly damp"
+      ]
+    },
+    colors: [
+      { name: "Forest Jade", hex: "#0c3b25" },
+      { name: "Champagne Gold", hex: "#E8D3A2" },
+      { name: "Midnight Onyx", hex: "#161917" }
+    ],
+    sizes: ["XS", "S", "M", "L", "XL"],
+    stock: 16,
+    rating: 4.9,
+    reviewCount: 39,
+    images: [
+      "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1000&q=80"
+    ],
+    isFeatured: true,
+    isNewArrival: true,
+    isBestSeller: true,
+    badge: "Luxury Sleepwear",
+    tags: ["Nighty", "Silk Nightwear", "Mulberry", "Sleepwear", "Loungewear"]
+  },
+  {
     id: "prod-1",
     name: "Chanderi Silk Kurta Set in Forest Emerald",
     slug: "chanderi-silk-kurta-set-forest-emerald",

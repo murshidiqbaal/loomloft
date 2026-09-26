@@ -20,10 +20,23 @@ export default function HomePage() {
   const { products, collections } = useStore();
   const [newArrivalCategory, setNewArrivalCategory] = useState<string>("All");
 
-  const newArrivalCategories = ["All", "Women", "Men", "Festive", "Handloom"];
+  const newArrivalCategories = ["All", "Sarees", "Nightwear & Loungewear", "Women", "Festive", "Handloom"];
 
   const filteredNewArrivals = products.filter((p) => {
     if (newArrivalCategory === "All") return true;
+    if (newArrivalCategory === "Sarees") {
+      return (
+        p.tags?.some((t) => t.toLowerCase().includes("saree")) ||
+        p.name.toLowerCase().includes("saree")
+      );
+    }
+    if (newArrivalCategory === "Nightwear & Loungewear") {
+      return (
+        p.tags?.some((t) => t.toLowerCase().includes("night") || t.toLowerCase().includes("lounge")) ||
+        p.name.toLowerCase().includes("nighty") ||
+        p.name.toLowerCase().includes("slip")
+      );
+    }
     return p.category.toLowerCase() === newArrivalCategory.toLowerCase();
   });
 
@@ -32,8 +45,39 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* 2. Interactive 3D Hero */}
+      {/* 2. Cinematic 3D Storytelling Experience */}
       <Hero3D />
+
+      {/* TRANSITION BRIDGE: FASHION FILM -> FASHION STORE */}
+      <section
+        id="loom-store-start"
+        className="relative bg-[#04160d] text-white pt-16 pb-20 overflow-hidden border-t border-[#f5b92e]/20"
+      >
+        {/* Continuous Golden Thread from 3D Scene */}
+        <div className="flex flex-col items-center justify-center -mt-16 mb-8">
+          <div className="w-[2px] h-24 bg-gradient-to-b from-[#f5b92e] to-[#e5a110] shadow-[0_0_12px_#f5b92e]" />
+          <div className="w-3.5 h-3.5 rounded-full border border-[#f5b92e] bg-[#072618] mt-[-4px] shadow-[0_0_10px_#f5b92e] flex items-center justify-center">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#f5b92e]" />
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#072618] border border-[#f5b92e]/40 text-[#f5b92e] text-[11px] font-serif uppercase tracking-[0.25em] mb-4 shadow-lg">
+            <Sparkles className="w-3.5 h-3.5 text-[#f5b92e]" />
+            <span>Curated Female Atelier</span>
+          </div>
+
+          <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-light uppercase tracking-[0.16em] text-white leading-tight">
+            NEW COLLECTION
+          </h2>
+
+          <div className="h-[1px] w-28 bg-gradient-to-r from-transparent via-[#f5b92e] to-transparent mx-auto my-5" />
+
+          <p className="max-w-2xl mx-auto text-stone-300 font-sans text-xs sm:text-sm tracking-wider leading-relaxed">
+            The golden thread continues into our latest drops — Handwoven Banarasi &amp; Kanjivaram Sarees, Pure Mulberry Silk Nighties &amp; Heirloom Loungewear designed for grace and comfort.
+          </p>
+        </div>
+      </section>
 
       {/* 3. Featured Collection Spotlight: The Heritage Series */}
       {featuredCollection && (
