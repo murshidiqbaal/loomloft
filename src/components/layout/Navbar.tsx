@@ -54,22 +54,28 @@ export default function Navbar() {
   ];
 
   const isHome = pathname === "/";
-  // On home, start transparent if not scrolled. On other pages, provide dark forest background
-  const navBgClass = scrolled || !isHome
-    ? "bg-[#072618]/95 backdrop-blur-md border-b border-[#e5a110]/20 shadow-lg py-3 text-cream"
-    : "bg-transparent py-5 text-white";
+  // On home, completely transparent overlay without border or background when at top
+  const navBgClass = isHome
+    ? scrolled
+      ? "bg-[#020b06]/90 backdrop-blur-md border-b border-[#e5a110]/20 shadow-lg py-3 text-cream"
+      : "bg-transparent border-transparent shadow-none py-4 text-white"
+    : "bg-[#072618]/95 backdrop-blur-md border-b border-[#e5a110]/20 shadow-lg py-3 text-cream";
 
   return (
     <>
-      {/* Announcement Bar */}
-      <div className="bg-[#04160d] text-[#e5a110] text-[10px] sm:text-xs py-2 px-4 tracking-[0.2em] font-serif uppercase text-center border-b border-[#e5a110]/20 relative z-50">
-        <span className="inline-block animate-pulse mr-2 font-bold">•</span>
-        {cms.announcement}
-        <span className="inline-block animate-pulse ml-2 font-bold">•</span>
-      </div>
+      {/* Announcement Bar - Only show on sub-pages or when scrolled on home */}
+      {(!isHome || scrolled) && (
+        <div className="bg-[#04160d]/95 backdrop-blur-sm text-[#e5a110] text-[10px] sm:text-xs py-1.5 px-4 tracking-[0.2em] font-serif uppercase text-center border-b border-[#e5a110]/20 relative z-50 transition-all duration-300">
+          <span className="inline-block animate-pulse mr-2 font-bold">•</span>
+          {cms.announcement}
+          <span className="inline-block animate-pulse ml-2 font-bold">•</span>
+        </div>
+      )}
 
       <header
-        className={`sticky top-0 z-40 transition-all duration-300 w-full ${navBgClass}`}
+        className={`${
+          isHome ? "fixed top-0 left-0 right-0" : "sticky top-0"
+        } z-40 transition-all duration-500 w-full ${navBgClass}`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
@@ -78,13 +84,13 @@ export default function Navbar() {
               href="/"
               className="flex items-center space-x-3 group cursor-pointer focus:outline-none"
             >
-              <div className="relative w-9 h-11 sm:w-10 sm:h-12 overflow-hidden rounded bg-[#072618]/60 p-0.5 border border-[#e5a110]/40 group-hover:border-[#f5b92e] transition-colors">
+              <div className="relative w-8 h-12 flex items-center justify-center">
                 <Image
-                  src="/images/loomloft-logo.jpeg"
+                  src="/logo.png"
                   alt="LoomLoft Official Logo"
                   fill
                   priority
-                  className="object-contain"
+                  className="object-contain drop-shadow-[0_0_8px_rgba(245,185,46,0.5)] group-hover:scale-105 transition-transform"
                 />
               </div>
               <div className="flex flex-col">
@@ -211,12 +217,12 @@ export default function Navbar() {
           >
             <div className="flex items-center justify-between pb-6 border-b border-[#e5a110]/20">
               <div className="flex items-center space-x-3">
-                <div className="relative w-8 h-10">
+                <div className="relative w-7 h-11 flex items-center justify-center">
                   <Image
-                    src="/images/loomloft-logo.jpeg"
+                    src="/logo.png"
                     alt="LoomLoft"
                     fill
-                    className="object-contain"
+                    className="object-contain drop-shadow-[0_0_8px_rgba(245,185,46,0.5)]"
                   />
                 </div>
                 <div>

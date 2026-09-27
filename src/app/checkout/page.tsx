@@ -71,7 +71,7 @@ export default function CheckoutPage() {
           color: i.color,
           quantity: i.quantity,
           price: i.product.price,
-          image: i.product.images[0] || "/images/loomloft-logo.jpeg"
+          image: i.product.images[0] || "/logo.png"
         })),
         shippingAddress: address
       });

@@ -66,14 +66,14 @@ export default function LoadingScreen() {
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="relative z-10 w-20 h-24 flex items-center justify-center overflow-hidden rounded"
+              className="relative z-10 w-20 h-28 flex items-center justify-center"
             >
               <Image
-                src="/images/loomloft-logo.jpeg"
+                src="/logo.png"
                 alt="LoomLoft Official Logo"
                 fill
                 priority
-                className="object-contain"
+                className="object-contain drop-shadow-[0_0_15px_rgba(245,185,46,0.6)]"
               />
             </motion.div>
           </div>

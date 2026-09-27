@@ -28,8 +28,8 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "LoomLoft Guild" }],
   icons: {
-    icon: "/images/loomloft-logo.jpeg",
-    apple: "/images/loomloft-logo.jpeg"
+    icon: "/logo.png",
+    apple: "/logo.png"
   },
   openGraph: {
     title: "LOOM LOFT — Quality in Every Thread",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "LoomLoft",
     images: [
       {
-        url: "/images/loomloft-logo.jpeg",
+        url: "/logo.png",
         width: 1200,
         height: 630,
         alt: "LoomLoft Official Heritage Brand"
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "LOOM LOFT — Quality in Every Thread",
     description: "Timeless handloom craftsmanship, reimagined for the modern wardrobe.",
-    images: ["/images/loomloft-logo.jpeg"]
+    images: ["/logo.png"]
   }
 };
 

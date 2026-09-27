@@ -167,7 +167,7 @@ export default function CartDrawer() {
                         {/* Thumbnail */}
                         <div className="relative w-20 h-24 rounded-xl overflow-hidden bg-stone-900 shrink-0 border border-stone-700/60">
                           <Image
-                            src={item.product.images[0] || "/images/loomloft-logo.jpeg"}
+                            src={item.product.images[0] || "/logo.png"}
                             alt={item.product.name}
                             fill
                             className="object-cover"

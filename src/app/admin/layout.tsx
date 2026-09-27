@@ -53,12 +53,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return (
       <div className="min-h-screen bg-[#04160d] text-white flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-[#072618] border border-[#e5a110]/40 rounded-3xl p-8 sm:p-10 shadow-2xl text-center space-y-6">
-          <div className="relative w-14 h-16 mx-auto overflow-hidden rounded bg-[#04160d] p-1 border border-[#e5a110]/40">
+          <div className="relative w-12 h-16 mx-auto flex items-center justify-center">
             <Image
-              src="/images/loomloft-logo.jpeg"
+              src="/logo.png"
               alt="LoomLoft Logo"
               fill
-              className="object-contain"
+              className="object-contain drop-shadow-[0_0_10px_rgba(245,185,46,0.6)]"
             />
           </div>
 
@@ -120,12 +120,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="space-y-6">
           {/* Logo & Curator Badge */}
           <div className="flex items-center space-x-3 pb-6 border-b border-[#e5a110]/20">
-            <div className="relative w-8 h-10 overflow-hidden rounded bg-[#04160d] p-0.5 border border-[#e5a110]/40">
+            <div className="relative w-7 h-10 flex items-center justify-center">
               <Image
-                src="/images/loomloft-logo.jpeg"
+                src="/logo.png"
                 alt="LoomLoft"
                 fill
-                className="object-contain"
+                className="object-contain drop-shadow-[0_0_8px_rgba(245,185,46,0.6)]"
               />
             </div>
             <div>

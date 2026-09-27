@@ -80,17 +80,17 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-stone-800">
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
-            <Link href="/" className="flex items-center space-x-3">
-              <div className="relative w-10 h-12 overflow-hidden rounded bg-[#072618] p-0.5 border border-[#e5a110]/40">
+            <Link href="/" className="flex items-center space-x-3 group">
+              <div className="relative w-8 h-12 flex items-center justify-center">
                 <Image
-                  src="/images/loomloft-logo.jpeg"
+                  src="/logo.png"
                   alt="LoomLoft Official Logo"
                   fill
-                  className="object-contain"
+                  className="object-contain drop-shadow-[0_0_8px_rgba(245,185,46,0.5)] group-hover:scale-105 transition-transform"
                 />
               </div>
               <div>
-                <span className="font-serif tracking-[0.25em] text-xl font-bold uppercase text-[#e5a110]">
+                <span className="font-serif tracking-[0.25em] text-xl font-bold uppercase text-[#e5a110] group-hover:text-[#f5b92e] transition-colors">
                   LOOM LOFT
                 </span>
                 <p className="font-serif tracking-[0.3em] text-[8px] uppercase text-stone-400 mt-1">
