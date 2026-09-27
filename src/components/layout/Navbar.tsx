@@ -27,14 +27,15 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 30) {
+      if (window.scrollY > 20) {
         setScrolled(true);
       } else {
         setScrolled(false);
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -49,22 +50,15 @@ export default function Navbar() {
     { label: "Handloom", href: "/collections/heritage-series" },
     { label: "Men", href: "/collections/crafted-elegance" },
     { label: "Women", href: "/collections/ethereal-weaves" },
-    { label: "New Arrivals", href: "/products?filter=new" },
     { label: "Our Story", href: "/about" },
   ];
 
   const isHome = pathname === "/";
-  // On home, completely transparent overlay without border or background when at top
-  const navBgClass = isHome
-    ? scrolled
-      ? "bg-[#020b06]/90 backdrop-blur-md border-b border-[#e5a110]/20 shadow-lg py-3 text-cream"
-      : "bg-transparent border-transparent shadow-none py-4 text-white"
-    : "bg-[#072618]/95 backdrop-blur-md border-b border-[#e5a110]/20 shadow-lg py-3 text-cream";
 
   return (
     <>
-      {/* Announcement Bar - Only show on sub-pages or when scrolled on home */}
-      {(!isHome || scrolled) && (
+      {/* Announcement Bar - Only show on sub-pages when at the very top */}
+      {!isHome && !scrolled && (
         <div className="bg-[#04160d]/95 backdrop-blur-sm text-[#e5a110] text-[10px] sm:text-xs py-1.5 px-4 tracking-[0.2em] font-serif uppercase text-center border-b border-[#e5a110]/20 relative z-50 transition-all duration-300">
           <span className="inline-block animate-pulse mr-2 font-bold">•</span>
           {cms.announcement}
@@ -72,135 +66,160 @@ export default function Navbar() {
         </div>
       )}
 
+      {/* Floating Transition Header */}
       <header
-        className={`${
-          isHome ? "fixed top-0 left-0 right-0" : "sticky top-0"
-        } z-40 transition-all duration-500 w-full ${navBgClass}`}
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ease-out flex justify-center ${
+          scrolled
+            ? "pt-3 sm:pt-4 px-3 sm:px-6 pointer-events-none"
+            : isHome
+            ? "pt-4 pb-4 px-4 sm:px-8 bg-transparent pointer-events-auto"
+            : "pt-3 pb-3 px-4 sm:px-8 bg-[#072618]/95 border-b border-[#e5a110]/20 shadow-lg pointer-events-auto"
+        }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            {/* LEFT: Official Logo */}
-            <Link
-              href="/"
-              className="flex items-center space-x-3 group cursor-pointer focus:outline-none"
+        <div
+          className={`w-full transition-all duration-500 ease-out flex items-center justify-between ${
+            scrolled
+              ? "max-w-5xl rounded-full bg-[#030b06]/85 backdrop-blur-xl border border-white/15 shadow-[0_14px_40px_rgba(0,0,0,0.7),0_0_20px_rgba(229,161,16,0.08)] py-2 sm:py-2.5 px-5 sm:px-7 pointer-events-auto"
+              : "max-w-7xl rounded-none bg-transparent border-transparent py-0 px-2 sm:px-4 pointer-events-auto"
+          }`}
+        >
+          {/* LEFT: Official Logo */}
+          <Link
+            href="/"
+            className="flex items-center space-x-2.5 sm:space-x-3 group cursor-pointer focus:outline-none flex-shrink-0"
+          >
+            <div
+              className={`relative flex items-center justify-center transition-all duration-500 ${
+                scrolled ? "w-6 h-9" : "w-7 sm:w-8 h-10 sm:h-12"
+              }`}
             >
-              <div className="relative w-8 h-12 flex items-center justify-center">
-                <Image
-                  src="/logo.png"
-                  alt="LoomLoft Official Logo"
-                  fill
-                  priority
-                  className="object-contain drop-shadow-[0_0_8px_rgba(245,185,46,0.5)] group-hover:scale-105 transition-transform"
-                />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-serif tracking-[0.25em] text-lg sm:text-xl font-bold uppercase text-[#e5a110] group-hover:text-[#f5b92e] transition-colors leading-none">
-                  LOOM LOFT
+              <Image
+                src="/logo.png"
+                alt="LoomLoft Official Logo"
+                fill
+                priority
+                className="object-contain drop-shadow-[0_0_8px_rgba(245,185,46,0.5)] group-hover:scale-105 transition-transform"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span
+                className={`font-serif tracking-[0.22em] font-bold uppercase text-[#e5a110] group-hover:text-[#f5b92e] transition-all leading-none ${
+                  scrolled ? "text-base sm:text-lg" : "text-lg sm:text-xl"
+                }`}
+              >
+                LOOM LOFT
+              </span>
+              <span
+                className={`font-serif tracking-[0.28em] text-[7px] sm:text-[8px] uppercase text-stone-300 mt-1 transition-all ${
+                  scrolled ? "hidden md:block" : "block"
+                }`}
+              >
+                QUALITY IN EVERY THREAD
+              </span>
+            </div>
+          </Link>
+
+          {/* CENTER: Navigation Links (Desktop) */}
+          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="relative group text-[11px] xl:text-xs uppercase tracking-[0.18em] font-medium font-sans text-stone-200 hover:text-[#e5a110] transition-colors py-1"
+                >
+                  <span>{link.label}</span>
+                  <span
+                    className={`absolute bottom-0 left-0 h-[1.5px] bg-[#e5a110] transition-all duration-300 ${
+                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* RIGHT: Action Icons */}
+          <div
+            className={`flex items-center space-x-2 sm:space-x-3.5 ${
+              scrolled ? "pl-2 sm:pl-3 border-l border-white/10" : ""
+            }`}
+          >
+            {/* Search Trigger */}
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="p-1.5 sm:p-2 text-stone-200 hover:text-[#e5a110] hover:scale-110 transition-all rounded-full"
+              aria-label="Open Search"
+            >
+              <Search className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+            </button>
+
+            {/* Wishlist Link */}
+            <Link
+              href="/wishlist"
+              className="relative p-1.5 sm:p-2 text-stone-200 hover:text-[#e5a110] hover:scale-110 transition-all rounded-full"
+              aria-label="Wishlist"
+            >
+              <Heart className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+              {wishlist.length > 0 && (
+                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-[#e5a110] text-[#04160d] text-[9px] font-bold flex items-center justify-center">
+                  {wishlist.length}
                 </span>
-                <span className="font-serif tracking-[0.3em] text-[8px] uppercase text-stone-300 mt-1">
-                  QUALITY IN EVERY THREAD
-                </span>
-              </div>
+              )}
             </Link>
 
-            {/* CENTER: Navigation Links (Desktop) */}
-            <nav className="hidden lg:flex items-center space-x-7">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="relative group text-xs uppercase tracking-[0.18em] font-medium font-sans text-stone-200 hover:text-[#e5a110] transition-colors py-1"
-                  >
-                    <span>{link.label}</span>
-                    <span
-                      className={`absolute bottom-0 left-0 h-[1.5px] bg-[#e5a110] transition-all duration-300 ${
-                        isActive ? "w-full" : "w-0 group-hover:w-full"
-                      }`}
-                    />
-                  </Link>
-                );
-              })}
-            </nav>
+            {/* Account Link */}
+            <Link
+              href="/account"
+              className="hidden sm:inline-flex p-1.5 sm:p-2 text-stone-200 hover:text-[#e5a110] hover:scale-110 transition-all rounded-full"
+              aria-label="Account Profile"
+            >
+              <User className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+            </Link>
 
-            {/* RIGHT: Action Icons */}
-            <div className="flex items-center space-x-3 sm:space-x-5">
-              {/* Search Trigger */}
-              <button
-                onClick={() => setSearchOpen(true)}
-                className="p-2 text-stone-200 hover:text-[#e5a110] hover:scale-110 transition-all rounded-full"
-                aria-label="Open Search"
-              >
-                <Search className="w-5 h-5" />
-              </button>
-
-              {/* Wishlist Link */}
+            {/* Admin Quick Indicator */}
+            {isAdmin && (
               <Link
-                href="/wishlist"
-                className="relative p-2 text-stone-200 hover:text-[#e5a110] hover:scale-110 transition-all rounded-full"
-                aria-label="Wishlist"
+                href="/admin"
+                className="hidden md:inline-flex items-center space-x-1 px-2 py-0.5 text-[9px] tracking-wider uppercase font-serif bg-[#e5a110] text-[#04160d] rounded-md font-semibold"
+                title="Admin Portal Active"
               >
-                <Heart className="w-5 h-5" />
-                {wishlist.length > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#e5a110] text-[#04160d] text-[10px] font-bold flex items-center justify-center">
-                    {wishlist.length}
-                  </span>
-                )}
+                <ShieldCheck className="w-3 h-3" />
+                <span>Admin</span>
               </Link>
+            )}
 
-              {/* Account Link */}
-              <Link
-                href="/account"
-                className="hidden sm:inline-flex p-2 text-stone-200 hover:text-[#e5a110] hover:scale-110 transition-all rounded-full"
-                aria-label="Account Profile"
-              >
-                <User className="w-5 h-5" />
-              </Link>
-
-              {/* Admin Quick Indicator */}
-              {isAdmin && (
-                <Link
-                  href="/admin"
-                  className="hidden md:inline-flex items-center space-x-1 px-2.5 py-1 text-[10px] tracking-wider uppercase font-serif bg-[#e5a110] text-[#04160d] rounded-md font-semibold"
-                  title="Admin Portal Active"
+            {/* Cart Drawer Trigger */}
+            <button
+              onClick={() => setCartOpen(true)}
+              className="relative p-1.5 sm:p-2 text-stone-200 hover:text-[#e5a110] hover:scale-110 transition-all rounded-full"
+              aria-label="Open Shopping Bag"
+            >
+              <ShoppingBag className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+              {totalCartCount > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute top-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-[#e5a110] text-[#04160d] text-[9px] font-bold flex items-center justify-center"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>Admin</span>
-                </Link>
+                  {totalCartCount}
+                </motion.span>
               )}
+            </button>
 
-              {/* Cart Drawer Trigger */}
-              <button
-                onClick={() => setCartOpen(true)}
-                className="relative p-2 text-stone-200 hover:text-[#e5a110] hover:scale-110 transition-all rounded-full"
-                aria-label="Open Shopping Bag"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                {totalCartCount > 0 && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#e5a110] text-[#04160d] text-[10px] font-bold flex items-center justify-center"
-                  >
-                    {totalCartCount}
-                  </motion.span>
-                )}
-              </button>
-
-              {/* Mobile Hamburger Button */}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2 text-stone-200 hover:text-[#e5a110] transition-colors"
-                aria-label="Toggle navigation menu"
-              >
-                {mobileMenuOpen ? (
-                  <X className="w-6 h-6 text-[#e5a110]" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
-              </button>
-            </div>
+            {/* Mobile Hamburger Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-1.5 sm:p-2 text-stone-200 hover:text-[#e5a110] transition-colors"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-5 h-5 text-[#e5a110]" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
+            </button>
           </div>
         </div>
       </header>

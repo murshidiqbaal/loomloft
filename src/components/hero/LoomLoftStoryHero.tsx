@@ -3,16 +3,12 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowDown, ArrowRight } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const TOTAL_FRAMES = 300;
 const FRAME_WIDTH = 1920;
 const FRAME_HEIGHT = 1080;
-// Exact center coordinates of the watermark on the 1920x1080 source frames
-const WATERMARK_X = 1750;
-const WATERMARK_Y = 885;
 
 export default function LoomLoftStoryHero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -25,7 +21,6 @@ export default function LoomLoftStoryHero() {
 
   // Cached image elements
   const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
-  const logoImgRef = useRef<HTMLImageElement | null>(null);
   const frameProxyRef = useRef({ frame: 1 });
 
   // Draw a specific frame to the canvas with watermark overlay
@@ -79,46 +74,6 @@ export default function LoomLoftStoryHero() {
 
     ctx.clearRect(0, 0, cw, ch);
     ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
-
-    // Overlay black background gradient & LoomLoft logo to guarantee watermark is 100% hidden
-    const wmScreenX = offsetX + WATERMARK_X * scale;
-    const wmScreenY = offsetY + WATERMARK_Y * scale;
-    const radius = 65 * scale;
-
-    // 1. Soft radial black / forest-green gradient over watermark
-    const grad = ctx.createRadialGradient(
-      wmScreenX,
-      wmScreenY,
-      10 * scale,
-      wmScreenX,
-      wmScreenY,
-      radius
-    );
-    grad.addColorStop(0, "rgba(2, 11, 6, 0.98)");
-    grad.addColorStop(0.45, "rgba(3, 16, 9, 0.92)");
-    grad.addColorStop(0.75, "rgba(4, 22, 13, 0.70)");
-    grad.addColorStop(1, "rgba(4, 22, 13, 0)");
-
-    ctx.save();
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(wmScreenX, wmScreenY, radius, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 2. Draw golden LoomLoft logo over watermark
-    const logoImg = logoImgRef.current;
-    if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
-      const logoW = 50 * scale;
-      const logoH = (50 * (logoImg.naturalHeight / logoImg.naturalWidth)) * scale;
-      ctx.drawImage(
-        logoImg,
-        wmScreenX - logoW / 2,
-        wmScreenY - logoH / 2,
-        logoW,
-        logoH
-      );
-    }
-    ctx.restore();
   };
 
   const scrollToStore = () => {
@@ -135,14 +90,6 @@ export default function LoomLoftStoryHero() {
 
   // Preload frames progressively
   useEffect(() => {
-    // Preload logo image
-    const logo = new window.Image();
-    logo.src = "/logo.png";
-    logo.onload = () => {
-      logoImgRef.current = logo;
-      drawFrame(frameProxyRef.current.frame);
-    };
-
     let isCancelled = false;
     imagesRef.current = new Array(TOTAL_FRAMES + 1).fill(null);
 
@@ -283,28 +230,6 @@ export default function LoomLoftStoryHero() {
           className="absolute inset-0 w-full h-full block z-10 touch-none pointer-events-none"
         />
 
-        {/* CSS Safeguard Watermark Overlay (Directly positioned over 91.12% x, 81.90% y) */}
-        <div
-          className="absolute pointer-events-none z-20 transition-opacity duration-300"
-          style={{
-            right: "4.5%",
-            bottom: "13.5%",
-            transform: "translate(50%, 50%)",
-          }}
-        >
-          <div className="relative flex items-center justify-center">
-            {/* Small background black gradient */}
-            <div className="absolute inset-0 -m-5 rounded-full bg-gradient-to-r from-black/95 via-[#020b06]/95 to-black/95 blur-md" />
-            <Image
-              src="/logo.png"
-              alt="LoomLoft"
-              width={42}
-              height={72}
-              className="relative w-8 sm:w-10 h-auto drop-shadow-[0_0_10px_rgba(245,185,46,0.6)]"
-              priority
-            />
-          </div>
-        </div>
 
         {/* Ambient Subtle Glow */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#0d3824]/20 rounded-full blur-[120px] pointer-events-none z-0" />

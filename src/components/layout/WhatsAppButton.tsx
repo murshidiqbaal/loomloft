@@ -12,7 +12,7 @@ export default function WhatsAppButton() {
   );
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end">
+    <div className="fixed bottom-[64px] sm:bottom-[72px] right-[96px] sm:right-[116px] z-40 flex flex-col items-end">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -52,18 +52,26 @@ export default function WhatsAppButton() {
         )}
       </AnimatePresence>
 
-      <motion.button
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-4 py-3 bg-[#072618] border border-[#e5a110] text-[#e5a110] hover:bg-[#0d3824] rounded-full shadow-2xl transition-all group"
-        aria-label="Contact LoomLoft Stylist on WhatsApp"
-      >
-        <MessageCircle className="w-5 h-5 text-[#f5b92e] group-hover:scale-110 transition-transform" />
-        <span className="text-xs font-serif tracking-widest uppercase font-medium hidden sm:inline text-cream">
+      <div className="relative group">
+        {/* Soft shadow diffuser ensuring complete opacity over watermark */}
+        <div className="absolute inset-0 -m-3 rounded-full bg-black/85 blur-md pointer-events-none" />
+
+        {/* Hover Tooltip to the left */}
+        <span className="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-3 py-1.5 rounded-full bg-[#04160d]/95 border border-[#e5a110]/40 text-cream text-[10px] sm:text-xs font-serif tracking-widest uppercase whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-xl">
           Stylist Help
         </span>
-      </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.94 }}
+          onClick={() => setIsOpen(!isOpen)}
+          className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center bg-[#04160d] border border-[#e5a110] text-[#e5a110] hover:bg-[#09291a] rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.9),0_0_20px_rgba(229,161,16,0.25)] transition-all"
+          aria-label="Contact LoomLoft Stylist on WhatsApp"
+        >
+          <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 text-[#f5b92e] group-hover:scale-110 transition-transform" />
+          <span className="absolute top-1.5 right-1.5 w-3 h-3 bg-emerald-400 border-2 border-[#04160d] rounded-full animate-pulse" />
+        </motion.button>
+      </div>
     </div>
   );
 }
