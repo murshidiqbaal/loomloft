@@ -2,8 +2,8 @@
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowDown, ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { ArrowDown } from "lucide-react";
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const TOTAL_FRAMES = 300;
@@ -147,14 +147,16 @@ export default function LoomLoftStoryHero() {
     };
   }, [drawFrame, isInitialReady]);
 
-  // Handle Canvas Resize
+  // Handle Canvas Resize with pixel-perfect High-DPI support
   useEffect(() => {
     const handleResize = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
+      const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+      canvas.width = Math.round(window.innerWidth * dpr);
+      canvas.height = Math.round(window.innerHeight * dpr);
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
       drawFrame(frameProxyRef.current.frame);
     };
 
@@ -236,7 +238,11 @@ export default function LoomLoftStoryHero() {
         <div className="absolute bottom-1/4 right-1/4 w-[450px] h-[450px] bg-[#f5b92e]/10 rounded-full blur-[140px] pointer-events-none z-0" />
 
         {/* TOP RIGHT MINIMAL SKIP BUTTON */}
-        <div className="absolute top-6 right-6 z-30 pointer-events-auto">
+        <div
+          className={`absolute top-6 right-6 z-30 transition-opacity duration-500 ${
+            scrollProgress >= 0.86 ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
+          }`}
+        >
           <button
             onClick={scrollToStore}
             className="btn-loom px-4 py-2 rounded-full bg-[#072618]/70 hover:bg-[#0d3824] border border-[#e5a110]/30 text-[#f5b92e] font-serif text-[11px] uppercase tracking-[0.2em] transition-all shadow-md flex items-center space-x-2 group cursor-pointer"
@@ -250,8 +256,8 @@ export default function LoomLoftStoryHero() {
         {/* Only shows subtle scroll hint on initial load; fades away as soon as user starts scrolling */}
         <div
           className={`absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-2 pointer-events-none z-20 transition-all duration-700 ${!hasStartedScrolling
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-4"
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-4"
             }`}
         >
           <span className="font-serif text-[11px] tracking-[0.28em] uppercase text-[#deb841]/85">
@@ -268,11 +274,10 @@ export default function LoomLoftStoryHero() {
 
         {/* THOUGHT 01: THE THREAD (Frames 15 - 75) */}
         <div
-          className={`absolute inset-0 flex flex-col items-center justify-center p-6 sm:p-10 z-20 pointer-events-none transition-all duration-700 ${
-            isSlideActive(15, 75)
+          className={`absolute inset-0 flex flex-col items-center justify-center p-6 sm:p-10 z-20 pointer-events-none transition-all duration-700 ${isSlideActive(15, 75)
               ? "opacity-100 translate-y-0"
               : "opacity-0 -translate-y-4"
-          }`}
+            }`}
         >
           <div className="text-center max-w-lg">
             <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light tracking-[0.14em] text-white leading-tight uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
@@ -289,11 +294,10 @@ export default function LoomLoftStoryHero() {
 
         {/* THOUGHT 02: THE WEAVE (Frames 85 - 145) */}
         <div
-          className={`absolute inset-0 flex flex-col items-start justify-center p-6 sm:p-14 z-20 pointer-events-none transition-all duration-700 ${
-            isSlideActive(85, 145)
+          className={`absolute inset-0 flex flex-col items-start justify-center p-6 sm:p-14 z-20 pointer-events-none transition-all duration-700 ${isSlideActive(85, 145)
               ? "opacity-100 translate-y-0"
               : "opacity-0 -translate-y-4"
-          }`}
+            }`}
         >
           <div className="max-w-md text-left">
             <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light tracking-[0.12em] text-white leading-tight uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
@@ -308,11 +312,10 @@ export default function LoomLoftStoryHero() {
 
         {/* THOUGHT 03: THE FABRIC (Frames 155 - 215) */}
         <div
-          className={`absolute inset-0 flex flex-col items-end justify-center p-6 sm:p-14 z-20 pointer-events-none transition-all duration-700 ${
-            isSlideActive(155, 215)
+          className={`absolute inset-0 flex flex-col items-end justify-center p-6 sm:p-14 z-20 pointer-events-none transition-all duration-700 ${isSlideActive(155, 215)
               ? "opacity-100 translate-y-0"
               : "opacity-0 -translate-y-4"
-          }`}
+            }`}
         >
           <div className="max-w-md text-right">
             <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light tracking-[0.12em] text-white leading-tight uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
@@ -333,8 +336,55 @@ export default function LoomLoftStoryHero() {
           <div className="w-[1.5px] h-14 bg-gradient-to-b from-[#f5b92e] to-[#f5b92e]/20 shadow-[0_0_8px_#f5b92e]" />
         </div>
 
-        {/* ULTRA-MINIMAL BOTTOM PROGRESS LINE (NO SCENE NUMBERS / COUNTS) */}
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-stone-900/60 pointer-events-none z-30">
+        {/* CINEMATIC FULL BLACKOUT OVERLAY */}
+        <div
+          className="absolute inset-0 bg-[#000000] z-24 pointer-events-none transition-opacity duration-300"
+          style={{ opacity: Math.min(1, Math.max(0, (scrollProgress - 0.86) / 0.08)) }}
+        />
+
+        {/* REGAL BRAND LOGO EASING IN FROM THE BLACKOUT INTO NEXT SECTION */}
+        {scrollProgress >= 0.91 && (
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center p-6 z-25 pointer-events-none"
+            style={{
+              opacity: Math.min(1, Math.max(0, (scrollProgress - 0.91) / 0.07)),
+              transform: `scale(${0.92 + Math.min(1, Math.max(0, (scrollProgress - 0.91) / 0.07)) * 0.08}) translateY(${(1 - Math.min(1, Math.max(0, (scrollProgress - 0.91) / 0.07))) * 24}px)`,
+              transition: "opacity 0.2s ease-out, transform 0.2s ease-out",
+            }}
+          >
+            {/* Ambient Imperial Golden Glow */}
+            <div className="absolute w-80 h-80 rounded-full bg-[#f5b92e]/12 blur-[100px] pointer-events-none" />
+
+            {/* Golden Monogram Emblem */}
+            <div className="relative w-16 h-24 sm:w-20 sm:h-28 mb-4 drop-shadow-[0_0_28px_rgba(245,185,46,0.65)]">
+              <Image
+                src="/logo.png"
+                alt="LoomLoft Official Emblem"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+
+            {/* Official Typography */}
+            <span className="font-serif text-2xl sm:text-4xl tracking-[0.32em] uppercase font-light text-[#f5b92e] drop-shadow-[0_0_20px_rgba(245,185,46,0.5)]">
+              LOOM LOFT
+            </span>
+            <span className="font-serif text-[10px] sm:text-xs tracking-[0.45em] uppercase text-stone-300 mt-2.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+              QUALITY IN EVERY THREAD
+            </span>
+
+            {/* Continuous Golden Guide Thread leading into the Atelier / Store */}
+            <div className="w-[1.5px] h-20 bg-gradient-to-b from-[#f5b92e] to-[#e5a110]/50 mt-7 shadow-[0_0_10px_#f5b92e]" />
+          </div>
+        )}
+
+        {/* ULTRA-MINIMAL BOTTOM PROGRESS LINE */}
+        <div
+          className={`absolute bottom-0 left-0 right-0 h-[2px] bg-stone-900/60 pointer-events-none z-30 transition-opacity duration-300 ${
+            scrollProgress >= 0.92 ? "opacity-0" : "opacity-100"
+          }`}
+        >
           <div
             className="h-full bg-gradient-to-r from-[#e5a110] to-[#f5b92e] transition-all duration-150 ease-out shadow-[0_0_6px_#f5b92e]"
             style={{ width: `${Math.round(scrollProgress * 100)}%` }}

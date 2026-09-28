@@ -51,9 +51,9 @@ export default function HomePage() {
       {/* TRANSITION BRIDGE: FASHION FILM -> FASHION STORE */}
       <section
         id="loom-store-start"
-        className="relative bg-[#04160d] text-white pt-16 pb-20 overflow-hidden border-t border-[#f5b92e]/20"
+        className="relative bg-gradient-to-b from-black via-[#03130b] to-[#04160d] text-white pt-16 pb-20 overflow-hidden"
       >
-        {/* Continuous Golden Thread from 3D Scene */}
+        {/* Continuous Golden Thread from Blackout Transition */}
         <div className="flex flex-col items-center justify-center -mt-16 mb-8">
           <div className="w-[2px] h-24 bg-gradient-to-b from-[#f5b92e] to-[#e5a110] shadow-[0_0_12px_#f5b92e]" />
           <div className="w-3.5 h-3.5 rounded-full border border-[#f5b92e] bg-[#072618] mt-[-4px] shadow-[0_0_10px_#f5b92e] flex items-center justify-center">
