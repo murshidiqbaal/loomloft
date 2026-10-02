@@ -1,16 +1,43 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Check, Sparkles } from "lucide-react";
 import { InstagramIcon, YouTubeIcon, FacebookIcon } from "@/components/icons/BrandIcons";
 import { useStore } from "@/context/StoreContext";
 
 export default function Footer() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const { showToast } = useStore();
+
+  const clickCountRef = useRef(0);
+  const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    clickCountRef.current += 1;
+
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
+    }
+
+    if (e.detail === 3 || clickCountRef.current >= 3) {
+      e.preventDefault();
+      e.stopPropagation();
+      clickCountRef.current = 0;
+      showToast("Opening Admin Management Atelier...", "info");
+      router.push("/admin");
+      return;
+    }
+
+    // Reset click count after 1200ms if 3 clicks not completed
+    clickTimerRef.current = setTimeout(() => {
+      clickCountRef.current = 0;
+    }, 1200);
+  };
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +107,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-stone-800">
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
-            <Link href="/" className="flex items-center space-x-3 group">
+            <Link
+              href="/"
+              onClick={handleLogoClick}
+              className="flex items-center space-x-3 group select-none cursor-pointer"
+              title="LoomLoft Official Guild"
+            >
               <div className="relative w-8 h-12 flex items-center justify-center">
                 <Image
                   src="/logo.png"

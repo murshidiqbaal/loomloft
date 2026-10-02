@@ -10,6 +10,7 @@ import SearchOverlay from "@/components/search/SearchOverlay";
 import ProductQuickViewModal from "@/components/products/ProductQuickViewModal";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import Toast from "@/components/layout/Toast";
+import "@/lib/appwrite";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://loomloft.net"),

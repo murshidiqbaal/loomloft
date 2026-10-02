@@ -8,88 +8,86 @@ export default function LoadingScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Only display on initial session load, keep fast (~1.4s)
-    const hasLoaded = sessionStorage.getItem("loomloft_visited");
-    if (hasLoaded) {
-      setLoading(false);
-      return;
-    }
+    // Lock background scroll during the 3-second loading phase
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
+    // 3-second loader duration
     const timer = setTimeout(() => {
       setLoading(false);
-      sessionStorage.setItem("loomloft_visited", "true");
-    }, 1400);
+      document.body.style.overflow = originalOverflow;
+    }, 3000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      document.body.style.overflow = originalOverflow;
+    };
   }, []);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {loading && (
         <motion.div
+          key="loomloft-loader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#072618] text-[#FAF7F2] select-none pointer-events-auto"
+          exit={{
+            opacity: 0,
+            transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+          }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#04160d] select-none pointer-events-auto"
         >
-          {/* Animated golden thread path */}
-          <div className="relative w-48 h-32 flex flex-col items-center justify-center">
-            <svg
-              className="absolute inset-0 w-full h-full"
-              viewBox="0 0 200 120"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <motion.path
-                d="M 10 60 Q 60 10 100 60 T 190 60"
-                stroke="#e5a110"
-                strokeWidth="2"
-                strokeLinecap="round"
-                fill="none"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 1.1, ease: "easeInOut" }}
-              />
-              <motion.circle
-                cx="190"
-                cy="60"
-                r="3"
-                fill="#f5b92e"
-                initial={{ scale: 0 }}
-                animate={{ scale: [0, 1.4, 1] }}
-                transition={{ delay: 0.9, duration: 0.4 }}
-              />
-            </svg>
-
-            {/* Official LoomLoft Logo Center */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="relative z-10 w-20 h-28 flex items-center justify-center"
-            >
-              <Image
-                src="/logo.png"
-                alt="LoomLoft Official Logo"
-                fill
-                priority
-                className="object-contain drop-shadow-[0_0_15px_rgba(245,185,46,0.6)]"
-              />
-            </motion.div>
-          </div>
-
+          {/* Subtle warm golden ambient aura behind the logo */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="text-center mt-3"
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{
+              opacity: [0.25, 0.65, 0.4, 0.7, 0.35],
+              scale: [0.8, 1.15, 0.95, 1.12, 1],
+            }}
+            exit={{
+              opacity: 0,
+              scale: 1.25,
+              transition: { duration: 0.6, ease: "easeInOut" },
+            }}
+            transition={{
+              duration: 3,
+              times: [0, 0.3, 0.55, 0.8, 1],
+              ease: "easeInOut",
+            }}
+            style={{
+              background:
+                "radial-gradient(circle, rgba(245, 185, 46, 0.35) 0%, rgba(229, 161, 16, 0.15) 50%, transparent 72%)",
+            }}
+            className="absolute w-64 h-64 sm:w-80 sm:h-80 rounded-full blur-3xl pointer-events-none"
+          />
+
+          {/* Logo Only Container with Entrance, Breathing, and Exit Transition */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.78, filter: "blur(8px)" }}
+            animate={{
+              opacity: [0, 1, 1, 1, 1],
+              scale: [0.78, 1.05, 0.98, 1.03, 1],
+              filter: ["blur(8px)", "blur(0px)", "blur(0px)", "blur(0px)", "blur(0px)"],
+            }}
+            exit={{
+              opacity: 0,
+              scale: 1.1,
+              filter: "blur(6px)",
+              transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+            }}
+            transition={{
+              duration: 3,
+              times: [0, 0.28, 0.55, 0.82, 1],
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="relative z-10 w-28 h-48 sm:w-36 sm:h-60 flex items-center justify-center"
           >
-            <h1 className="font-serif text-xl tracking-[0.3em] uppercase text-[#e5a110] font-semibold">
-              LOOM LOFT
-            </h1>
-            <p className="font-serif text-[10px] tracking-[0.35em] uppercase text-stone-300 mt-1">
-              QUALITY IN EVERY THREAD
-            </p>
+            <Image
+              src="/logo.png"
+              alt="LoomLoft Logo"
+              fill
+              priority
+              className="object-contain drop-shadow-[0_0_20px_rgba(245,185,46,0.6)] drop-shadow-[0_0_40px_rgba(229,161,16,0.3)]"
+            />
           </motion.div>
         </motion.div>
       )}

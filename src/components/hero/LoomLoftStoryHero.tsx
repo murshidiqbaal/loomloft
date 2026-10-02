@@ -147,9 +147,12 @@ export default function LoomLoftStoryHero() {
     };
   }, [drawFrame, isInitialReady]);
 
+  const [viewport, setViewport] = useState({ width: 0, height: 0 });
+
   // Handle Canvas Resize with pixel-perfect High-DPI support
   useEffect(() => {
     const handleResize = () => {
+      setViewport({ width: window.innerWidth, height: window.innerHeight });
       const canvas = canvasRef.current;
       if (!canvas) return;
       const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
@@ -213,6 +216,20 @@ export default function LoomLoftStoryHero() {
     if (!hasStartedScrolling) return false;
     return currentFrame >= startFrame && currentFrame <= endFrame;
   };
+
+  const cw = viewport.width || (typeof window !== "undefined" ? window.innerWidth : FRAME_WIDTH);
+  const ch = viewport.height || (typeof window !== "undefined" ? window.innerHeight : FRAME_HEIGHT);
+  const coverScale = Math.max(cw / FRAME_WIDTH, ch / FRAME_HEIGHT);
+  const drawW = FRAME_WIDTH * coverScale;
+  const drawH = FRAME_HEIGHT * coverScale;
+  const offsetX = (cw - drawW) / 2;
+  const offsetY = (ch - drawH) / 2;
+
+  // Exact coordinates matching the logo in the 1920x1080 canvas frame
+  const logoLeft = offsetX + 817 * coverScale;
+  const logoTop = offsetY + 194 * coverScale;
+  const logoWidth = 277 * coverScale;
+  const logoHeight = 473 * coverScale;
 
   return (
     <div
@@ -331,51 +348,39 @@ export default function LoomLoftStoryHero() {
           </div>
         </div>
 
-        {/* Golden Guide Thread Continuing Downwards at Animation Finale */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
-          <div className="w-[1.5px] h-14 bg-gradient-to-b from-[#f5b92e] to-[#f5b92e]/20 shadow-[0_0_8px_#f5b92e]" />
-        </div>
-
         {/* CINEMATIC FULL BLACKOUT OVERLAY */}
         <div
           className="absolute inset-0 bg-[#000000] z-24 pointer-events-none transition-opacity duration-300"
           style={{ opacity: Math.min(1, Math.max(0, (scrollProgress - 0.86) / 0.08)) }}
         />
 
-        {/* REGAL BRAND LOGO EASING IN FROM THE BLACKOUT INTO NEXT SECTION */}
-        {scrollProgress >= 0.91 && (
+        {/* REGAL BRAND LOGO OVERLAY PRECISELY ALIGNED OVER THE CANVAS EMBLEM */}
+        {scrollProgress >= 0.93 && (
           <div
-            className="absolute inset-0 flex flex-col items-center justify-center p-6 z-25 pointer-events-none"
+            className="absolute inset-0 pointer-events-none z-25 overflow-hidden"
             style={{
-              opacity: Math.min(1, Math.max(0, (scrollProgress - 0.91) / 0.07)),
-              transform: `scale(${0.92 + Math.min(1, Math.max(0, (scrollProgress - 0.91) / 0.07)) * 0.08}) translateY(${(1 - Math.min(1, Math.max(0, (scrollProgress - 0.91) / 0.07))) * 24}px)`,
-              transition: "opacity 0.2s ease-out, transform 0.2s ease-out",
+              opacity: Math.min(1, Math.max(0, (scrollProgress - 0.93) / 0.05)),
+              transition: "opacity 0.2s ease-out",
             }}
           >
-            {/* Ambient Imperial Golden Glow */}
-            <div className="absolute w-80 h-80 rounded-full bg-[#f5b92e]/12 blur-[100px] pointer-events-none" />
-
-            {/* Golden Monogram Emblem */}
-            <div className="relative w-16 h-24 sm:w-20 sm:h-28 mb-4 drop-shadow-[0_0_28px_rgba(245,185,46,0.65)]">
+            {/* Positioned exactly over the underlying canvas logo (zero shift/double image) */}
+            <div
+              className="absolute"
+              style={{
+                left: `${logoLeft}px`,
+                top: `${logoTop}px`,
+                width: `${logoWidth}px`,
+                height: `${logoHeight}px`,
+              }}
+            >
               <Image
                 src="/logo.png"
-                alt="LoomLoft Official Emblem"
+                alt="LoomLoft Official Logo"
                 fill
                 className="object-contain"
                 priority
               />
             </div>
-
-            {/* Official Typography */}
-            <span className="font-serif text-2xl sm:text-4xl tracking-[0.32em] uppercase font-light text-[#f5b92e] drop-shadow-[0_0_20px_rgba(245,185,46,0.5)]">
-              LOOM LOFT
-            </span>
-            <span className="font-serif text-[10px] sm:text-xs tracking-[0.45em] uppercase text-stone-300 mt-2.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-              QUALITY IN EVERY THREAD
-            </span>
-
-            {/* Continuous Golden Guide Thread leading into the Atelier / Store */}
-            <div className="w-[1.5px] h-20 bg-gradient-to-b from-[#f5b92e] to-[#e5a110]/50 mt-7 shadow-[0_0_10px_#f5b92e]" />
           </div>
         )}
 

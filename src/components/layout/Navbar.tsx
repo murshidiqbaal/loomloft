@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
 import {
   Search,
@@ -18,12 +18,55 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { cart, wishlist, setCartOpen, setSearchOpen, cms, isAdmin } = useStore();
+  const { cart, wishlist, setCartOpen, setSearchOpen, cms, isAdmin, showToast } = useStore();
 
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Admin access via Keyboard shortcut: Ctrl + Shift + A (or Cmd + Shift + A on Mac)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isA = e.key === "a" || e.key === "A" || e.code === "KeyA";
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && isA) {
+        e.preventDefault();
+        showToast("Opening Admin Management Atelier...", "info");
+        router.push("/admin");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [router, showToast]);
+
+  // Admin access via 3-clicks on Logo
+  const clickCountRef = useRef(0);
+  const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    clickCountRef.current += 1;
+
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
+    }
+
+    if (e.detail === 3 || clickCountRef.current >= 3) {
+      e.preventDefault();
+      e.stopPropagation();
+      clickCountRef.current = 0;
+      setMobileMenuOpen(false);
+      showToast("Opening Admin Management Atelier...", "info");
+      router.push("/admin");
+      return;
+    }
+
+    // Reset click count after 1200ms if 3 clicks not completed
+    clickTimerRef.current = setTimeout(() => {
+      clickCountRef.current = 0;
+    }, 1200);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -77,16 +120,18 @@ export default function Navbar() {
         }`}
       >
         <div
-          className={`w-full transition-all duration-500 ease-out flex items-center justify-between ${
+          className={`w-full transition-all duration-500 ease-out flex items-center justify-between gap-6 sm:gap-8 lg:gap-12 xl:gap-16 ${
             scrolled
-              ? "max-w-5xl rounded-full bg-[#030b06]/85 backdrop-blur-xl border border-white/15 shadow-[0_14px_40px_rgba(0,0,0,0.7),0_0_20px_rgba(229,161,16,0.08)] py-2 sm:py-2.5 px-5 sm:px-7 pointer-events-auto"
+              ? "max-w-6xl xl:max-w-7xl rounded-full bg-[#030b06]/85 backdrop-blur-xl border border-white/15 shadow-[0_14px_40px_rgba(0,0,0,0.7),0_0_20px_rgba(229,161,16,0.08)] py-2 sm:py-2.5 px-5 sm:px-7 lg:px-8 pointer-events-auto"
               : "max-w-7xl rounded-none bg-transparent border-transparent py-0 px-2 sm:px-4 pointer-events-auto"
           }`}
         >
           {/* LEFT: Official Logo */}
           <Link
             href="/"
-            className="flex items-center space-x-2.5 sm:space-x-3 group cursor-pointer focus:outline-none flex-shrink-0"
+            onClick={handleLogoClick}
+            className="flex items-center space-x-2.5 sm:space-x-3 group cursor-pointer focus:outline-none flex-shrink-0 mr-4 sm:mr-6 lg:mr-8 xl:mr-12 select-none"
+            title="LoomLoft Official Guild"
           >
             <div
               className={`relative flex items-center justify-center transition-all duration-500 ${
@@ -120,14 +165,14 @@ export default function Navbar() {
           </Link>
 
           {/* CENTER: Navigation Links (Desktop) */}
-          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+          <nav className="hidden lg:flex items-center space-x-5 xl:space-x-8 flex-shrink-0">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative group text-[11px] xl:text-xs uppercase tracking-[0.18em] font-medium font-sans text-stone-200 hover:text-[#e5a110] transition-colors py-1"
+                  className="relative group text-[11px] xl:text-xs uppercase tracking-[0.18em] font-medium font-sans text-stone-200 hover:text-[#e5a110] transition-colors py-1 whitespace-nowrap"
                 >
                   <span>{link.label}</span>
                   <span
@@ -142,7 +187,7 @@ export default function Navbar() {
 
           {/* RIGHT: Action Icons */}
           <div
-            className={`flex items-center space-x-2 sm:space-x-3.5 ${
+            className={`flex items-center space-x-2 sm:space-x-3.5 flex-shrink-0 ${
               scrolled ? "pl-2 sm:pl-3 border-l border-white/10" : ""
             }`}
           >
@@ -235,7 +280,11 @@ export default function Navbar() {
             className="fixed inset-0 z-50 lg:hidden bg-[#072618] text-cream flex flex-col p-6 overflow-y-auto"
           >
             <div className="flex items-center justify-between pb-6 border-b border-[#e5a110]/20">
-              <div className="flex items-center space-x-3">
+              <div
+                onClick={handleLogoClick}
+                className="flex items-center space-x-3 cursor-pointer select-none"
+                title="LoomLoft Official Guild"
+              >
                 <div className="relative w-7 h-11 flex items-center justify-center">
                   <Image
                     src="/logo.png"
