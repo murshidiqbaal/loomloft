@@ -72,21 +72,21 @@ export default function StoryBehindThread() {
   ];
 
   return (
-    <section className="py-24 bg-[#FAF7F2] text-stone-900 relative overflow-hidden">
+    <section className="py-24 bg-transparent text-white relative overflow-hidden">
       {/* Decorative Golden Thread Connector Line */}
       <div className="absolute top-1/2 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#e5a110]/40 to-transparent pointer-events-none hidden lg:block" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Title */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center space-x-2 text-[#072618] text-xs font-serif uppercase tracking-[0.25em] mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#e5a110]" />
+          <div className="inline-flex items-center space-x-2 text-[#f5b92e] text-xs font-serif uppercase tracking-[0.25em] mb-3 px-3 py-1 rounded-full glass-pill-gold">
+            <Sparkles className="w-3.5 h-3.5 text-[#f5b92e]" />
             <span>Editorial Textile Journey</span>
           </div>
-          <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-[#072618]">
+          <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
             THE STORY BEHIND THE THREAD
           </h2>
-          <p className="mt-4 text-stone-600 font-sans text-sm sm:text-base leading-relaxed">
+          <p className="mt-4 text-stone-300 font-sans text-sm sm:text-base leading-relaxed">
             Follow the sacred metamorphosis from raw forest cocoon to contemporary runway silhouette. Step into the loom.
           </p>
         </div>
@@ -100,10 +100,10 @@ export default function StoryBehindThread() {
               <button
                 key={s.id}
                 onClick={() => setActiveStep(idx)}
-                className={`text-left p-4 sm:p-5 rounded-2xl transition-all duration-300 relative border ${
+                className={`text-left p-4 sm:p-5 rounded-2xl transition-all duration-300 relative border cursor-pointer ${
                   isCurrent
-                    ? "bg-[#072618] text-white border-[#e5a110] shadow-xl"
-                    : "bg-white/80 hover:bg-white text-stone-700 border-stone-200"
+                    ? "glass-panel border-[#f5b92e] text-white shadow-[0_0_20px_rgba(229,161,16,0.25)]"
+                    : "glass-pill text-stone-300 hover:text-white hover:border-white/20"
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -122,14 +122,14 @@ export default function StoryBehindThread() {
                 </div>
                 <h4
                   className={`font-serif text-base sm:text-lg font-semibold tracking-wide ${
-                    isCurrent ? "text-white" : "text-stone-800"
+                    isCurrent ? "text-white" : "text-stone-200"
                   }`}
                 >
                   {s.title}
                 </h4>
                 <p
                   className={`text-[11px] mt-1 font-sans line-clamp-1 ${
-                    isCurrent ? "text-stone-300" : "text-stone-500"
+                    isCurrent ? "text-stone-300" : "text-stone-400"
                   }`}
                 >
                   {s.subtitle}
@@ -139,7 +139,7 @@ export default function StoryBehindThread() {
                 {isCurrent && (
                   <motion.div
                     layoutId="activeStoryIndicator"
-                    className="absolute bottom-0 left-4 right-4 h-1 bg-gradient-to-r from-[#e5a110] to-[#f5b92e] rounded-t-full"
+                    className="absolute bottom-0 left-4 right-4 h-1 bg-gradient-to-r from-[#e5a110] to-[#f5b92e] rounded-t-full shadow-[0_0_8px_#f5b92e]"
                   />
                 )}
               </button>
@@ -155,19 +155,19 @@ export default function StoryBehindThread() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.45 }}
-            className="grid grid-cols-1 lg:grid-cols-12 bg-white rounded-3xl overflow-hidden border border-[#e5a110]/30 shadow-2xl"
+            className="grid grid-cols-1 lg:grid-cols-12 glass-panel rounded-3xl overflow-hidden border border-[#e5a110]/35 shadow-2xl backdrop-blur-2xl"
           >
             {/* Image Canvas Left */}
-            <div className="lg:col-span-6 relative aspect-[4/3] lg:aspect-auto min-h-[380px] bg-stone-900">
+            <div className="lg:col-span-6 relative aspect-[4/3] lg:aspect-auto min-h-[380px] bg-stone-900 border-r border-white/10">
               <Image
                 src={steps[activeStep].image}
                 alt={steps[activeStep].title}
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
               <div className="absolute bottom-6 left-6 text-white">
-                <span className="font-serif text-xs uppercase tracking-[0.25em] text-[#f5b92e] block">
+                <span className="font-serif text-xs uppercase tracking-[0.25em] text-[#f5b92e] block drop-shadow-[0_0_8px_rgba(245,185,46,0.5)]">
                   Artisan Fieldwork Archive
                 </span>
                 <span className="font-serif text-xl sm:text-2xl font-bold mt-1 block">
@@ -177,28 +177,28 @@ export default function StoryBehindThread() {
             </div>
 
             {/* Narrative Content Right */}
-            <div className="lg:col-span-6 p-8 sm:p-12 flex flex-col justify-between space-y-8 bg-[#FAF7F2]">
+            <div className="lg:col-span-6 p-8 sm:p-12 flex flex-col justify-between space-y-8 bg-[#04160d]/50 backdrop-blur-xl">
               <div>
-                <div className="flex items-center space-x-2 text-[#072618] font-serif text-xs font-bold uppercase tracking-[0.2em] mb-2">
+                <div className="flex items-center space-x-2 text-[#f5b92e] font-serif text-xs font-bold uppercase tracking-[0.2em] mb-2">
                   <span>Phase {steps[activeStep].number}</span>
                   <span>•</span>
                   <span>{steps[activeStep].title}</span>
                 </div>
-                <h3 className="font-serif text-2xl sm:text-4xl font-bold text-[#072618] leading-tight">
+                <h3 className="font-serif text-2xl sm:text-4xl font-bold text-white leading-tight">
                   {steps[activeStep].subtitle}
                 </h3>
-                <p className="mt-4 text-stone-600 font-sans text-sm sm:text-base leading-relaxed">
+                <p className="mt-4 text-stone-300 font-sans text-sm sm:text-base leading-relaxed">
                   {steps[activeStep].description}
                 </p>
 
                 {/* Technical Specifications */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 pt-6 border-t border-stone-200">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 pt-6 border-t border-white/10">
                   {steps[activeStep].details.map((item, i) => (
-                    <div key={i} className="bg-white p-3.5 rounded-xl border border-stone-200">
+                    <div key={i} className="glass-card p-3.5 rounded-xl border border-white/10">
                       <span className="text-[10px] uppercase font-serif tracking-widest text-stone-400 block">
                         {item.label}
                       </span>
-                      <span className="font-serif text-xs sm:text-sm font-semibold text-[#072618] mt-1 block">
+                      <span className="font-serif text-xs sm:text-sm font-semibold text-[#f5b92e] mt-1 block">
                         {item.value}
                       </span>
                     </div>
@@ -207,13 +207,13 @@ export default function StoryBehindThread() {
               </div>
 
               {/* Step Navigation CTA */}
-              <div className="flex items-center justify-between pt-4">
-                <span className="text-xs text-stone-500 font-serif">
+              <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <span className="text-xs text-stone-400 font-serif">
                   Step {activeStep + 1} of {steps.length}
                 </span>
                 <button
                   onClick={() => setActiveStep((prev) => (prev + 1) % steps.length)}
-                  className="px-6 py-3 bg-[#072618] hover:bg-[#0d3824] text-[#f5b92e] text-xs font-serif uppercase tracking-widest font-semibold rounded-xl transition-all flex items-center space-x-2 shadow-lg"
+                  className="btn-loom px-6 py-3 bg-gradient-to-r from-[#e5a110] to-[#f5b92e] text-[#04160d] text-xs font-serif uppercase tracking-widest font-bold rounded-xl transition-all flex items-center space-x-2 shadow-[0_0_20px_rgba(229,161,16,0.3)] cursor-pointer"
                 >
                   <span>
                     {activeStep === steps.length - 1 ? "Replay Story" : "Next Phase"}

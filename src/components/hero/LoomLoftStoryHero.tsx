@@ -10,10 +10,17 @@ const TOTAL_FRAMES = 300;
 const FRAME_WIDTH = 1920;
 const FRAME_HEIGHT = 1080;
 
-export default function LoomLoftStoryHero() {
+interface LoomLoftStoryHeroProps {
+  onAnimationComplete?: (completed: boolean) => void;
+}
+
+export default function LoomLoftStoryHero({ onAnimationComplete }: LoomLoftStoryHeroProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const onAnimationCompleteRef = useRef(onAnimationComplete);
+  onAnimationCompleteRef.current = onAnimationComplete;
 
   const [currentFrame, setCurrentFrame] = useState(1);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -186,6 +193,10 @@ export default function LoomLoftStoryHero() {
         onUpdate: (self) => {
           const p = self.progress;
           setScrollProgress(p);
+
+          if (onAnimationCompleteRef.current) {
+            onAnimationCompleteRef.current(p >= 0.98);
+          }
 
           const frame = Math.max(1, Math.min(TOTAL_FRAMES, Math.round(1 + p * (TOTAL_FRAMES - 1))));
           frameProxyRef.current.frame = frame;

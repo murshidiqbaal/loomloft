@@ -36,16 +36,16 @@ export default function BehindTheLoom() {
   ];
 
   return (
-    <section className="py-24 bg-[#072618] text-white relative overflow-hidden border-t border-[#e5a110]/20">
+    <section className="py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-14">
           <div>
-            <div className="inline-flex items-center space-x-2 text-[#e5a110] text-xs font-serif uppercase tracking-[0.25em] mb-3">
+            <div className="inline-flex items-center space-x-2 text-[#f5b92e] text-xs font-serif uppercase tracking-[0.25em] mb-3 px-3.5 py-1 rounded-full glass-pill-gold">
               <YouTubeIcon className="w-4 h-4 text-red-500" />
               <span>Official YouTube Guild Channel</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-white">
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
               BEHIND THE LOOM
             </h2>
             <p className="mt-3 text-stone-300 font-sans text-sm sm:text-base max-w-xl leading-relaxed">
@@ -57,7 +57,7 @@ export default function BehindTheLoom() {
             href="https://www.youtube.com/@LoomLoft-Handloom"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 md:mt-0 inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-[#04160d] hover:bg-[#0d3824] border border-[#e5a110]/40 text-[#f5b92e] text-xs font-serif uppercase tracking-widest font-semibold transition-all group"
+            className="mt-6 md:mt-0 inline-flex items-center space-x-2 px-6 py-3 rounded-xl glass-panel hover:bg-[#072618]/70 border border-[#e5a110]/40 text-[#f5b92e] text-xs font-serif uppercase tracking-widest font-semibold transition-all group backdrop-blur-xl"
           >
             <span>Visit @LoomLoft-Handloom</span>
             <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -69,7 +69,7 @@ export default function BehindTheLoom() {
           {videos.map((vid) => (
             <div
               key={vid.id}
-              className="bg-[#04160d] border border-stone-800 hover:border-[#e5a110]/60 rounded-3xl overflow-hidden transition-all duration-300 group flex flex-col justify-between shadow-xl"
+              className="glass-card border border-white/10 hover:border-[#e5a110]/60 rounded-3xl overflow-hidden transition-all duration-300 group flex flex-col justify-between shadow-2xl backdrop-blur-xl"
             >
               {/* Thumbnail Container */}
               <div
@@ -90,13 +90,13 @@ export default function BehindTheLoom() {
                 </span>
 
                 {/* Cluster Badge */}
-                <span className="absolute top-3 left-3 px-2.5 py-1 bg-[#072618]/90 text-[#f5b92e] text-[9px] font-serif uppercase tracking-widest rounded-md border border-[#e5a110]/30">
+                <span className="absolute top-3 left-3 px-2.5 py-1 glass-pill-gold text-[#f5b92e] text-[9px] font-serif uppercase tracking-widest rounded-md border border-[#e5a110]/30 shadow-md">
                   {vid.cluster}
                 </span>
 
                 {/* Play Button */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-14 h-14 rounded-full bg-[#e5a110] text-[#04160d] flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-[#f5b92e] transition-all">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#e5a110] to-[#f5b92e] text-[#04160d] flex items-center justify-center shadow-[0_0_25px_rgba(229,161,16,0.6)] group-hover:scale-110 transition-all">
                     <Play className="w-6 h-6 fill-current translate-x-0.5" />
                   </div>
                 </div>
@@ -108,7 +108,7 @@ export default function BehindTheLoom() {
                   <h3 className="font-serif text-lg font-semibold text-white group-hover:text-[#f5b92e] transition-colors leading-snug">
                     {vid.title}
                   </h3>
-                  <p className="text-xs text-stone-400 mt-2 font-sans leading-relaxed line-clamp-2">
+                  <p className="text-xs text-stone-300 mt-2 font-sans leading-relaxed line-clamp-2">
                     {vid.description}
                   </p>
                 </div>

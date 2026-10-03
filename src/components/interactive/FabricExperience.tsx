@@ -212,16 +212,16 @@ export default function FabricExperience() {
   }, [activePreset]);
 
   return (
-    <section className="py-24 bg-[#072618] text-white relative overflow-hidden border-y border-[#e5a110]/20">
+    <section className="py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
-            <div className="inline-flex items-center space-x-2 text-[#e5a110] text-xs font-serif uppercase tracking-[0.25em] mb-3">
+            <div className="inline-flex items-center space-x-2 text-[#f5b92e] text-xs font-serif uppercase tracking-[0.25em] mb-3 px-3.5 py-1 rounded-full glass-pill-gold">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Tactile Textile Simulation</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-white">
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
               FEEL THE THREAD
             </h2>
             <p className="mt-3 text-stone-300 font-sans text-sm sm:text-base max-w-xl leading-relaxed">
@@ -230,14 +230,14 @@ export default function FabricExperience() {
           </div>
 
           {/* Preset Selector */}
-          <div className="mt-6 md:mt-0 flex items-center space-x-2 bg-[#04160d] p-1.5 rounded-2xl border border-stone-800">
+          <div className="mt-6 md:mt-0 flex items-center space-x-2 glass-panel p-1.5 rounded-2xl border border-white/10 backdrop-blur-xl">
             {(["chanderi", "mulberry", "tussar"] as const).map((key) => (
               <button
                 key={key}
                 onClick={() => setActivePreset(key)}
-                className={`px-4 py-2 rounded-xl text-xs font-serif uppercase tracking-widest transition-all ${
+                className={`px-4 py-2 rounded-xl text-xs font-serif uppercase tracking-widest transition-all cursor-pointer ${
                   activePreset === key
-                    ? "bg-[#e5a110] text-[#04160d] font-bold shadow-md"
+                    ? "bg-gradient-to-r from-[#e5a110] to-[#f5b92e] text-[#04160d] font-bold shadow-[0_0_15px_rgba(229,161,16,0.3)]"
                     : "text-stone-300 hover:text-white"
                 }`}
               >
@@ -248,15 +248,15 @@ export default function FabricExperience() {
         </div>
 
         {/* Interactive Weave Canvas Card */}
-        <div className="relative rounded-3xl overflow-hidden border border-[#e5a110]/30 shadow-2xl bg-[#04160d]">
+        <div className="relative rounded-3xl overflow-hidden glass-panel border border-[#e5a110]/35 shadow-2xl backdrop-blur-xl">
           <canvas
             ref={canvasRef}
             className="w-full h-[460px] cursor-crosshair block"
           />
 
           {/* Floating Live Telemetry Overlay */}
-          <div className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-[#072618]/90 backdrop-blur-md border border-[#e5a110]/30 rounded-2xl p-4 sm:p-5 text-xs space-y-2 pointer-events-none shadow-xl max-w-xs">
-            <div className="flex items-center space-x-2 text-[#f5b92e] font-serif uppercase tracking-wider text-[11px] font-semibold border-b border-stone-800 pb-2">
+          <div className="absolute top-4 left-4 sm:top-6 sm:left-6 glass-card border border-[#e5a110]/35 rounded-2xl p-4 sm:p-5 text-xs space-y-2 pointer-events-none shadow-2xl max-w-xs backdrop-blur-xl">
+            <div className="flex items-center space-x-2 text-[#f5b92e] font-serif uppercase tracking-wider text-[11px] font-semibold border-b border-white/10 pb-2">
               <Sliders className="w-3.5 h-3.5" />
               <span>{presets[activePreset].name}</span>
             </div>

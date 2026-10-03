@@ -36,26 +36,26 @@ export default function CustomerReviews() {
   };
 
   return (
-    <section className="py-24 bg-[#FAF7F2] text-stone-900 relative overflow-hidden border-t border-[#efe8dc]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-transparent text-white relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-14">
           <div>
-            <div className="inline-flex items-center space-x-2 text-[#072618] text-xs font-serif uppercase tracking-[0.25em] mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-[#e5a110]" />
+            <div className="inline-flex items-center space-x-2 text-[#f5b92e] text-xs font-serif uppercase tracking-[0.25em] mb-2 px-3 py-1 rounded-full glass-pill-gold">
+              <Sparkles className="w-3.5 h-3.5 text-[#f5b92e]" />
               <span>Verified Patron Testimonials</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-[#072618]">
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-white mt-1 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
               TESTAMENTS TO THE CRAFT
             </h2>
-            <p className="mt-2 text-stone-600 font-sans text-xs sm:text-sm">
+            <p className="mt-2 text-stone-300 font-sans text-xs sm:text-sm">
               Voices of patrons who cherish the tactile difference of authentic, zero-carbon handloom textiles.
             </p>
           </div>
 
           <button
             onClick={() => setModalOpen(true)}
-            className="mt-6 md:mt-0 inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-[#072618] hover:bg-[#0d3824] text-[#f5b92e] text-xs font-serif uppercase tracking-widest font-semibold transition-all shadow-md group"
+            className="btn-loom mt-6 md:mt-0 inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#e5a110] to-[#f5b92e] text-[#04160d] text-xs font-serif uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(229,161,16,0.3)] group cursor-pointer"
           >
             <PenLine className="w-4 h-4 group-hover:rotate-12 transition-transform" />
             <span>Write a Review</span>
@@ -67,30 +67,30 @@ export default function CustomerReviews() {
           {reviews.map((rev) => (
             <div
               key={rev.id}
-              className="bg-white border border-stone-200 hover:border-[#e5a110]/60 rounded-3xl p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300"
+              className="glass-card rounded-3xl p-6 sm:p-7 flex flex-col justify-between shadow-xl transition-all duration-300 relative overflow-hidden group"
             >
               <div>
                 {/* Star Rating */}
-                <div className="flex items-center space-x-1 text-[#e5a110] mb-4">
+                <div className="flex items-center space-x-1 text-[#f5b92e] mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
                       className={`w-3.5 h-3.5 ${
-                        i < rev.rating ? "fill-current" : "text-stone-300"
+                        i < rev.rating ? "fill-current drop-shadow-[0_0_6px_rgba(245,185,46,0.6)]" : "text-stone-600"
                       }`}
                     />
                   ))}
                 </div>
 
                 {/* Comment */}
-                <p className="text-xs sm:text-sm text-stone-700 font-sans italic leading-relaxed">
+                <p className="text-xs sm:text-sm text-stone-200 font-sans italic leading-relaxed">
                   &ldquo;{rev.comment}&rdquo;
                 </p>
 
                 {/* Garment Tag */}
                 {rev.productName && (
-                  <div className="mt-4 pt-3 border-t border-stone-100">
-                    <span className="text-[10px] font-serif uppercase tracking-wider text-[#072618] font-semibold block truncate">
+                  <div className="mt-4 pt-3 border-t border-white/10">
+                    <span className="text-[10px] font-serif uppercase tracking-wider text-[#f5b92e] font-semibold block truncate">
                       {rev.productName}
                     </span>
                   </div>
@@ -98,21 +98,21 @@ export default function CustomerReviews() {
               </div>
 
               {/* Author & Verification */}
-              <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
                 <div>
-                  <h4 className="font-serif text-sm font-bold text-stone-900">
+                  <h4 className="font-serif text-sm font-bold text-white">
                     {rev.author}
                   </h4>
-                  <span className="text-[11px] text-stone-500 font-sans">
+                  <span className="text-[11px] text-stone-400 font-sans">
                     {rev.location}
                   </span>
                 </div>
                 {rev.verifiedBuyer && (
                   <div
-                    className="flex items-center space-x-1 text-[10px] text-emerald-700 font-serif font-semibold"
+                    className="flex items-center space-x-1 text-[10px] text-emerald-300 font-serif font-semibold"
                     title="Verified Handloom Buyer"
                   >
-                    <CheckCircle className="w-3.5 h-3.5" />
+                    <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Verified</span>
                   </div>
                 )}

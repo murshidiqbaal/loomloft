@@ -51,19 +51,19 @@ export default function InstagramGrid() {
   ];
 
   return (
-    <section className="py-24 bg-[#FAF7F2] text-stone-900 border-t border-[#efe8dc]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-transparent text-white relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
-            <div className="inline-flex items-center space-x-2 text-[#072618] text-xs font-serif uppercase tracking-[0.25em] mb-2">
+            <div className="inline-flex items-center space-x-2 text-[#f5b92e] text-xs font-serif uppercase tracking-[0.25em] mb-2 px-3 py-1 rounded-full glass-pill-gold">
               <InstagramIcon className="w-3.5 h-3.5 text-[#e5a110]" />
               <span>Visual Diary</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-[#072618]">
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
               FOLLOW THE LOOM
             </h2>
-            <p className="mt-2 text-stone-600 font-sans text-xs sm:text-sm">
+            <p className="mt-2 text-stone-300 font-sans text-xs sm:text-sm">
               Live dispatches from our pit-loom studios, fabric drapes, and artisan journeys.
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function InstagramGrid() {
             href="https://www.instagram.com/loom_loft_/?hl=en"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 md:mt-0 inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-[#072618] hover:bg-[#0d3824] text-[#f5b92e] text-xs font-serif uppercase tracking-widest font-semibold transition-all group shadow-md"
+            className="btn-loom mt-6 md:mt-0 inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#e5a110] to-[#f5b92e] text-[#04160d] text-xs font-serif uppercase tracking-widest font-bold transition-all group shadow-[0_0_20px_rgba(229,161,16,0.3)] cursor-pointer"
           >
             <span>Follow @loom_loft_</span>
             <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -87,7 +87,7 @@ export default function InstagramGrid() {
               href="https://www.instagram.com/loom_loft_/?hl=en"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative aspect-square rounded-2xl overflow-hidden bg-stone-200 block shadow-sm border border-stone-200"
+              className="group relative aspect-square rounded-2xl overflow-hidden glass-card block shadow-lg border border-[#e5a110]/25 hover:border-[#f5b92e]/60 transition-all duration-500"
             >
               <Image
                 src={post.image}

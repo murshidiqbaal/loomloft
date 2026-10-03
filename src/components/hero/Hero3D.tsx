@@ -2,6 +2,10 @@
 
 import LoomLoftStoryHero from "./LoomLoftStoryHero";
 
-export default function Hero3D() {
-  return <LoomLoftStoryHero />;
+interface Hero3DProps {
+  onAnimationComplete?: (completed: boolean) => void;
+}
+
+export default function Hero3D({ onAnimationComplete }: Hero3DProps = {}) {
+  return <LoomLoftStoryHero onAnimationComplete={onAnimationComplete} />;
 }

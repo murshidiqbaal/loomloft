@@ -51,16 +51,16 @@ export default function CommunityUGC() {
   ];
 
   return (
-    <section className="py-24 bg-[#072618] text-white relative overflow-hidden border-t border-[#e5a110]/20">
+    <section className="py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-14">
           <div>
-            <div className="inline-flex items-center space-x-2 text-[#e5a110] text-xs font-serif uppercase tracking-[0.25em] mb-2">
+            <div className="inline-flex items-center space-x-2 text-[#f5b92e] text-xs font-serif uppercase tracking-[0.25em] mb-2 px-3.5 py-1 rounded-full glass-pill-gold">
               <Camera className="w-3.5 h-3.5" />
               <span>Sovereign Patron Archive</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-white">
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
               LOOMLOFT COMMUNITY
             </h2>
             <p className="mt-2 text-stone-300 font-sans text-xs sm:text-sm">
@@ -69,7 +69,7 @@ export default function CommunityUGC() {
           </div>
 
           {/* CTA */}
-          <div className="mt-6 md:mt-0 flex items-center space-x-3 bg-[#04160d] px-5 py-3 rounded-2xl border border-[#e5a110]/30">
+          <div className="mt-6 md:mt-0 flex items-center space-x-3 glass-panel px-5 py-3 rounded-2xl border border-[#e5a110]/35 backdrop-blur-xl">
             <span className="text-xs font-serif tracking-wider uppercase text-[#f5b92e]">
               TAG <strong>@LOOM_LOFT_</strong> TO BE FEATURED
             </span>
@@ -82,7 +82,7 @@ export default function CommunityUGC() {
             <div
               key={post.id}
               onClick={() => setSelectedPhoto(post)}
-              className="bg-[#04160d] border border-stone-800 hover:border-[#e5a110]/60 rounded-3xl overflow-hidden transition-all duration-300 group cursor-pointer shadow-xl flex flex-col justify-between"
+              className="glass-card border border-white/10 hover:border-[#e5a110]/60 rounded-3xl overflow-hidden transition-all duration-300 group cursor-pointer shadow-2xl flex flex-col justify-between"
             >
               <div className={`relative ${post.aspect} w-full overflow-hidden bg-stone-900`}>
                 <Image
@@ -93,7 +93,7 @@ export default function CommunityUGC() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
                 <div className="absolute bottom-3 left-3 right-3 text-white">
-                  <span className="text-[10px] font-serif uppercase tracking-widest text-[#f5b92e] block">
+                  <span className="text-[10px] font-serif uppercase tracking-widest text-[#f5b92e] block drop-shadow-[0_0_8px_rgba(245,185,46,0.6)]">
                     {post.handle}
                   </span>
                   <span className="font-serif text-sm font-semibold block mt-0.5">
@@ -106,11 +106,11 @@ export default function CommunityUGC() {
                 <p className="text-xs text-stone-300 font-sans italic line-clamp-2 leading-relaxed">
                   &ldquo;{post.quote}&rdquo;
                 </p>
-                <div className="mt-3 pt-2 border-t border-stone-800/80 flex items-center justify-between text-[11px] text-stone-400">
-                  <span className="truncate max-w-[180px] font-serif text-[#e5a110]">
+                <div className="mt-3 pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-stone-400">
+                  <span className="truncate max-w-[180px] font-serif text-[#f5b92e]">
                     {post.piece}
                   </span>
-                  <span className="text-stone-500 font-mono">View</span>
+                  <span className="text-stone-400 font-mono text-[10px] uppercase">View</span>
                 </div>
               </div>
             </div>

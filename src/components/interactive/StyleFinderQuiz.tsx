@@ -96,15 +96,15 @@ export default function StyleFinderQuiz() {
     .slice(0, 3);
 
   return (
-    <section className="py-24 bg-[#072618] text-white relative overflow-hidden border-t border-[#e5a110]/20">
+    <section className="py-24 relative overflow-hidden">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center space-x-2 text-[#e5a110] text-xs font-serif uppercase tracking-[0.25em] mb-2">
+          <div className="inline-flex items-center space-x-2 text-[#f5b92e] text-xs font-serif uppercase tracking-[0.25em] mb-2 px-3.5 py-1 rounded-full glass-pill-gold">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Artisanal Fashion Consultation</span>
           </div>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-[0.14em] text-white">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-[0.14em] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
             FIND YOUR LOOMLOFT STYLE
           </h2>
           <p className="mt-3 text-stone-300 font-sans text-xs sm:text-sm leading-relaxed">
@@ -113,11 +113,11 @@ export default function StyleFinderQuiz() {
         </div>
 
         {/* Quiz Window */}
-        <div className="bg-[#04160d] border border-[#e5a110]/35 rounded-3xl p-6 sm:p-12 shadow-2xl relative overflow-hidden">
+        <div className="glass-panel border border-[#e5a110]/35 rounded-3xl p-6 sm:p-12 shadow-[0_25px_60px_rgba(0,0,0,0.7)] backdrop-blur-2xl relative overflow-hidden">
           {!isCompleted ? (
             <div>
               {/* Progress bar */}
-              <div className="flex items-center justify-between text-xs font-serif uppercase tracking-widest text-[#f5b92e] mb-4">
+              <div className="flex items-center justify-between text-xs font-serif uppercase tracking-widest text-[#f5b92e] mb-4 font-semibold">
                 <span>
                   Question {currentQuestion + 1} of {questions.length}
                 </span>
@@ -125,9 +125,9 @@ export default function StyleFinderQuiz() {
                   {Math.round(((currentQuestion + 1) / questions.length) * 100)}% Curated
                 </span>
               </div>
-              <div className="w-full bg-[#072618] h-1.5 rounded-full overflow-hidden mb-8 border border-stone-800">
+              <div className="w-full bg-black/40 h-2 rounded-full overflow-hidden mb-8 border border-white/10">
                 <div
-                  className="h-full bg-gradient-to-r from-[#e5a110] to-[#f5b92e] transition-all duration-400"
+                  className="h-full bg-gradient-to-r from-[#e5a110] to-[#f5b92e] transition-all duration-400 shadow-[0_0_10px_#f5b92e]"
                   style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
                 />
               </div>
@@ -144,7 +144,7 @@ export default function StyleFinderQuiz() {
                   <h3 className="font-serif text-xl sm:text-2xl font-bold text-white mb-2">
                     {questions[currentQuestion].title}
                   </h3>
-                  <p className="text-xs text-stone-400 font-sans mb-8">
+                  <p className="text-xs text-stone-300 font-sans mb-8">
                     {questions[currentQuestion].subtitle}
                   </p>
 
@@ -153,7 +153,7 @@ export default function StyleFinderQuiz() {
                       <button
                         key={opt.key}
                         onClick={() => handleSelectOption(opt.key)}
-                        className="p-5 rounded-2xl bg-[#072618] hover:bg-[#0d3824] border border-stone-800 hover:border-[#e5a110] text-left transition-all group flex flex-col justify-between"
+                        className="p-5 rounded-2xl glass-card hover:bg-[#072618]/70 border border-white/10 hover:border-[#e5a110]/60 text-left transition-all group flex flex-col justify-between cursor-pointer"
                       >
                         <div>
                           <div className="flex items-center justify-between">
@@ -212,10 +212,10 @@ export default function StyleFinderQuiz() {
                   return (
                     <div
                       key={p.id}
-                      className="bg-[#072618] border border-stone-800 rounded-2xl p-3.5 flex flex-col justify-between hover:border-[#e5a110] transition-colors"
+                      className="glass-card border border-white/10 hover:border-[#e5a110]/50 rounded-2xl p-3.5 flex flex-col justify-between transition-all duration-300"
                     >
                       <div>
-                        <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden mb-3 bg-stone-900">
+                        <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden mb-3 bg-stone-900 border border-white/5">
                           <Image
                             src={p.images[0]}
                             alt={p.name}
@@ -226,10 +226,10 @@ export default function StyleFinderQuiz() {
                         <h4 className="font-serif text-sm font-semibold text-white line-clamp-1">
                           {p.name}
                         </h4>
-                        <p className="text-[11px] text-stone-400 mt-0.5 line-clamp-1">
+                        <p className="text-[11px] text-stone-300 mt-0.5 line-clamp-1">
                           {p.fabric}
                         </p>
-                        <div className="mt-2 font-serif text-base font-bold text-[#f5b92e]">
+                        <div className="mt-2 font-serif text-base font-bold text-[#f5b92e] drop-shadow-[0_0_8px_rgba(245,185,46,0.3)]">
                           {formatPrice(p.price)}
                         </div>
                       </div>
@@ -237,17 +237,17 @@ export default function StyleFinderQuiz() {
                       <div className="mt-4 flex gap-2">
                         <button
                           onClick={() => addToCart(p)}
-                          className="flex-1 py-2 bg-[#e5a110] hover:bg-[#f5b92e] text-[#04160d] text-[10px] font-serif uppercase tracking-widest font-bold rounded-lg transition-colors flex items-center justify-center space-x-1"
+                          className="flex-1 py-2 bg-gradient-to-r from-[#e5a110] to-[#f5b92e] text-[#04160d] text-[10px] font-serif uppercase tracking-widest font-bold rounded-lg transition-all shadow-[0_0_15px_rgba(229,161,16,0.25)] hover:shadow-[0_0_20px_rgba(245,185,46,0.4)] flex items-center justify-center space-x-1 cursor-pointer"
                         >
                           <ShoppingBag className="w-3.5 h-3.5" />
                           <span>Add to Bag</span>
                         </button>
                         <button
                           onClick={() => toggleWishlist(p)}
-                          className={`p-2 border rounded-lg transition-colors ${
+                          className={`p-2 rounded-lg transition-all cursor-pointer ${
                             isWish
-                              ? "bg-rose-950/40 border-rose-500 text-rose-400"
-                              : "border-stone-700 text-stone-300 hover:text-[#f5b92e]"
+                              ? "bg-rose-950/60 border border-rose-500/60 text-rose-400"
+                              : "glass-pill text-stone-300 hover:text-[#f5b92e]"
                           }`}
                           aria-label="Wishlist"
                         >
@@ -262,14 +262,14 @@ export default function StyleFinderQuiz() {
               <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <button
                   onClick={resetQuiz}
-                  className="px-6 py-3 rounded-xl border border-stone-700 hover:border-[#e5a110] text-stone-300 hover:text-white text-xs font-serif uppercase tracking-widest transition-colors flex items-center space-x-2"
+                  className="px-6 py-3 rounded-xl glass-panel hover:bg-white/10 border border-white/15 text-stone-200 hover:text-white text-xs font-serif uppercase tracking-widest transition-all flex items-center space-x-2 cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Retake Style Consultation</span>
                 </button>
                 <Link
                   href="/collections"
-                  className="px-8 py-3 rounded-xl bg-[#e5a110] hover:bg-[#f5b92e] text-[#04160d] text-xs font-serif uppercase tracking-widest font-bold transition-all shadow-xl"
+                  className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#e5a110] to-[#f5b92e] text-[#04160d] text-xs font-serif uppercase tracking-widest font-bold transition-all shadow-[0_0_20px_rgba(229,161,16,0.3)] hover:shadow-[0_0_25px_rgba(245,185,46,0.5)]"
                 >
                   Explore Complete Weaves
                 </Link>
