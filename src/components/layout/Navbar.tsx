@@ -12,8 +12,7 @@ import {
   User,
   Menu,
   X,
-  ArrowRight,
-  ShieldCheck
+  ArrowRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -30,9 +29,12 @@ export default function Navbar() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const isA = e.key === "a" || e.key === "A" || e.code === "KeyA";
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && isA) {
+      const isModifier = e.ctrlKey || e.metaKey;
+
+      if (isModifier && e.shiftKey && isA) {
         e.preventDefault();
-        showToast("Opening Admin Management Atelier...", "info");
+        e.stopPropagation();
+        showToast("Opening Admin Console (Ctrl+Shift+A)...", "info");
         router.push("/admin");
       }
     };
@@ -43,29 +45,45 @@ export default function Navbar() {
 
   // Admin access via 3-clicks on Logo
   const clickCountRef = useRef(0);
-  const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const clickResetTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const singleClickTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleLogoClick = (e: React.MouseEvent) => {
+    // Intercept default link navigation to allow multi-click detection without page refresh
+    e.preventDefault();
     clickCountRef.current += 1;
+    const currentCount = clickCountRef.current;
 
-    if (clickTimerRef.current) {
-      clearTimeout(clickTimerRef.current);
+    // Clear reset timer on every click
+    if (clickResetTimerRef.current) {
+      clearTimeout(clickResetTimerRef.current);
     }
 
-    if (e.detail === 3 || clickCountRef.current >= 3) {
-      e.preventDefault();
-      e.stopPropagation();
+    // Detect 3 clicks (either browser native e.detail === 3 or counter >= 3)
+    if (e.detail === 3 || currentCount >= 3) {
+      if (singleClickTimerRef.current) {
+        clearTimeout(singleClickTimerRef.current);
+      }
       clickCountRef.current = 0;
       setMobileMenuOpen(false);
-      showToast("Opening Admin Management Atelier...", "info");
+      showToast("Accessing Admin Console (3-click trigger)...", "info");
       router.push("/admin");
       return;
     }
 
-    // Reset click count after 1200ms if 3 clicks not completed
-    clickTimerRef.current = setTimeout(() => {
+    // Reset multi-click counter after 1200ms of inactivity
+    clickResetTimerRef.current = setTimeout(() => {
       clickCountRef.current = 0;
     }, 1200);
+
+    // If it's the first click and user is not on "/", prepare normal home navigation
+    if (currentCount === 1 && pathname !== "/") {
+      singleClickTimerRef.current = setTimeout(() => {
+        if (clickCountRef.current < 3) {
+          router.push("/");
+        }
+      }, 450);
+    }
   };
 
   useEffect(() => {
@@ -97,6 +115,10 @@ export default function Navbar() {
   ];
 
   const isHome = pathname === "/";
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <>
@@ -223,18 +245,6 @@ export default function Navbar() {
               <User className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
             </Link>
 
-            {/* Admin Quick Indicator */}
-            {isAdmin && (
-              <Link
-                href="/admin"
-                className="hidden md:inline-flex items-center space-x-1 px-2 py-0.5 text-[9px] tracking-wider uppercase font-serif bg-[#e5a110] text-[#04160d] rounded-md font-semibold"
-                title="Admin Portal Active"
-              >
-                <ShieldCheck className="w-3 h-3" />
-                <span>Admin</span>
-              </Link>
-            )}
-
             {/* Cart Drawer Trigger */}
             <button
               onClick={() => setCartOpen(true)}
@@ -349,14 +359,6 @@ export default function Navbar() {
                   <span>Wishlist ({wishlist.length})</span>
                 </Link>
               </div>
-
-              <Link
-                href="/admin"
-                className="flex items-center justify-center space-x-2 w-full py-2.5 bg-[#04160d] border border-[#e5a110]/20 rounded-xl text-[11px] uppercase tracking-widest text-stone-400 hover:text-[#e5a110]"
-              >
-                <ShieldCheck className="w-4 h-4 text-[#e5a110]" />
-                <span>Admin Management</span>
-              </Link>
             </div>
           </motion.div>
         )}

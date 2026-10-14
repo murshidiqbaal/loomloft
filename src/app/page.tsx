@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useStore } from "@/context/StoreContext";
 import Hero3D from "@/components/hero/Hero3D";
-import FabricExperience from "@/components/interactive/FabricExperience";
 import StoryBehindThread from "@/components/interactive/StoryBehindThread";
 import StyleFinderQuiz from "@/components/interactive/StyleFinderQuiz";
 import ProductCard from "@/components/products/ProductCard";
@@ -68,7 +67,6 @@ export default function HomePage() {
     return p.category.toLowerCase() === newArrivalCategory.toLowerCase();
   });
 
-  const featuredProducts = products.filter((p) => p.isFeatured || p.isBestSeller);
   const featuredCollection = collections[0]; // The Heritage Series
 
   return (
@@ -268,44 +266,7 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* 5. Interactive Fabric / Thread section */}
-          <FabricExperience />
-
-          {/* 6. Featured Products: "CURATED FOR YOU" */}
-          <section className="py-20 sm:py-28 relative">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
-                <div>
-                  <div className="inline-flex items-center space-x-2 text-[#f5b92e] text-xs font-serif uppercase tracking-[0.25em] mb-2 px-3 py-1 rounded-full glass-pill-gold">
-                    <Sparkles className="w-3.5 h-3.5 text-[#e5a110]" />
-                    <span>The Sovereign Collection</span>
-                  </div>
-                  <h2 className="font-serif text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
-                    CURATED FOR YOU
-                  </h2>
-                  <p className="mt-2 text-stone-300 font-sans text-xs sm:text-sm">
-                    Heirloom sarees, handspun tussar bandhgalas, and bespoke tailored separates.
-                  </p>
-                </div>
-
-                <Link
-                  href="/products"
-                  className="mt-6 md:mt-0 text-xs font-serif uppercase tracking-widest text-[#f5b92e] hover:text-white font-semibold flex items-center space-x-1.5 transition-colors"
-                >
-                  <span>Explore All Catalog</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredProducts.slice(0, 4).map((product) => (
-                  <ProductCard key={product.id} product={product} variant="glass" />
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* 7. "The Story Behind The Thread" */}
+          {/* Story Behind The Thread */}
           <StoryBehindThread />
 
           {/* 8. Collections Rail (Editorial Fashion Layout) */}

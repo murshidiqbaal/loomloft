@@ -65,7 +65,7 @@ export interface OrderItem {
   customerPhone: string;
   date: string;
   total: number;
-  paymentMethod: "UPI" | "Credit/Debit Card" | "Net Banking" | "Cash on Delivery";
+  paymentMethod: "UPI" | "Credit/Debit Card" | "Net Banking" | "Cash on Delivery" | "COD" | "UPI_MANUAL" | "BANK_TRANSFER" | string;
   paymentStatus: "Paid" | "Pending" | "Refunded";
   status: "Pending" | "Confirmed" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
   items: {

@@ -43,7 +43,7 @@ export default function CheckoutPage() {
   });
 
   const [deliveryMethod, setDeliveryMethod] = useState<"standard" | "express">("standard");
-  const [paymentMethod, setPaymentMethod] = useState<"UPI" | "Credit/Debit Card" | "Net Banking" | "Cash on Delivery">("UPI");
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "UPI_MANUAL" | "BANK_TRANSFER">("COD");
   const [isGift, setIsGift] = useState(false);
   const [giftNote, setGiftNote] = useState("");
 
@@ -52,42 +52,101 @@ export default function CheckoutPage() {
     setStep(2);
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     setIsProcessing(true);
 
-    // Simulate abstracted payment gateway (Razorpay / Stripe)
-    setTimeout(() => {
-      const order = createOrder({
+    try {
+      const orderPayload = {
+        customer_name: contact.name,
+        customer_email: contact.email,
+        customer_phone: contact.phone,
+        shipping_address: {
+          full_name: contact.name,
+          phone: contact.phone,
+          address_line_1: address.street,
+          city: address.city,
+          state: address.state,
+          pincode: address.pincode,
+          country: "India",
+          address_type: "HOME" as const,
+        },
+        items: cart.map((i) => ({
+          product_id: i.product.id,
+          product_name: i.product.name,
+          sku: `LL-${i.product.id.slice(0, 8).toUpperCase()}`,
+          image: i.product.images[0] || "/logo.png",
+          price: i.product.price,
+          quantity: i.quantity,
+          selected_size: i.size,
+          selected_color: i.color,
+        })),
+        payment_method: paymentMethod,
+        payment_reference: paymentMethod === "UPI_MANUAL" ? `UPI/2026/${Date.now().toString().slice(-6)}` : undefined,
+        subtotal: cartSubtotal,
+        discount: cartDiscount,
+        shipping_fee: cartShipping,
+        total: cartTotal,
+        customer_note: isGift ? `Gift Note: ${giftNote}` : undefined,
+      };
+
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderPayload),
+      });
+
+      const data = await res.json();
+      const realOrder = data.success ? data.order : null;
+
+      // Also clear local cart & record in local store
+      createOrder({
         customerName: contact.name,
         customerEmail: contact.email,
         customerPhone: contact.phone,
         total: cartTotal,
-        paymentMethod,
-        paymentStatus: paymentMethod === "Cash on Delivery" ? "Pending" : "Paid",
-        status: "Processing",
+        paymentMethod: paymentMethod === "COD" ? "Cash on Delivery" : paymentMethod,
+        paymentStatus: paymentMethod === "COD" ? "Pending" : "Paid",
+        status: "Pending",
         items: cart.map((i) => ({
           productName: i.product.name,
           size: i.size,
           color: i.color,
           quantity: i.quantity,
           price: i.product.price,
-          image: i.product.images[0] || "/logo.png"
+          image: i.product.images[0] || "/logo.png",
         })),
-        shippingAddress: address
+        shippingAddress: address,
       });
 
+      clearCart();
       setIsProcessing(false);
-      setCompletedOrder(order);
+      setCompletedOrder(realOrder || {
+        order_number: `LL-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+        id: "ord-new",
+        total: cartTotal,
+        status: "PENDING",
+        customer_email: contact.email,
+        items: cart.map((i) => ({
+          product_name_snapshot: i.product.name,
+          quantity: i.quantity,
+          price_snapshot: i.product.price,
+          selected_size: i.size,
+          selected_color: i.color,
+        })),
+      });
       setStep(3);
 
       try {
         confetti({
           particleCount: 100,
           spread: 70,
-          origin: { y: 0.6 }
+          origin: { y: 0.6 },
         });
       } catch {}
-    }, 1500);
+    } catch (err) {
+      console.error("Order creation failed:", err);
+      setIsProcessing(false);
+    }
   };
 
   if (completedOrder && step === 3) {
@@ -112,42 +171,47 @@ export default function CheckoutPage() {
             <div className="flex justify-between items-center pb-4 border-b border-stone-200">
               <div>
                 <span className="text-[10px] font-serif uppercase tracking-widest text-stone-400">Order Reference</span>
-                <h3 className="font-mono text-base font-bold text-[#072618]">{completedOrder.orderNumber}</h3>
+                <h3 className="font-mono text-base font-bold text-[#072618]">
+                  {completedOrder.order_number || completedOrder.orderNumber}
+                </h3>
               </div>
-              <span className="px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-serif uppercase tracking-wider rounded-full border border-emerald-200">
+              <span className="px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-serif uppercase tracking-wider rounded-full border border-emerald-200 font-bold">
                 {completedOrder.status}
               </span>
             </div>
 
             <div className="space-y-3">
-              {completedOrder.items.map((it: any, idx: number) => (
+              {completedOrder.items?.map((it: any, idx: number) => (
                 <div key={idx} className="flex justify-between items-center text-xs">
                   <span className="font-serif text-stone-800">
-                    {it.productName} ({it.size} / {it.color}) × {it.quantity}
+                    {it.product_name_snapshot || it.productName} ({it.selected_size || it.size || "Free Size"} / {it.selected_color || it.color || "Standard"}) × {it.quantity}
                   </span>
-                  <span className="font-mono font-semibold">{formatPrice(it.price * it.quantity)}</span>
+                  <span className="font-mono font-semibold">
+                    {formatPrice((it.price_snapshot || it.price || 0) * it.quantity)}
+                  </span>
                 </div>
               ))}
             </div>
 
             <div className="pt-4 border-t border-stone-200 flex justify-between font-serif text-base font-bold text-[#072618]">
-              <span>Total Paid</span>
+              <span>Grand Total</span>
               <span>{formatPrice(completedOrder.total)}</span>
             </div>
           </div>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/account/orders"
-              className="px-8 py-3.5 bg-[#072618] text-[#f5b92e] font-serif text-xs uppercase tracking-widest font-bold rounded-xl shadow-lg"
+              href={completedOrder.id ? `/account/orders/${completedOrder.id}` : "/account/orders"}
+              className="px-8 py-3.5 bg-[#072618] text-[#f5b92e] font-serif text-xs uppercase tracking-widest font-bold rounded-xl shadow-lg flex items-center justify-center space-x-2"
             >
-              Track Order Dispatch
+              <span>Track Live Dispatch Timeline</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              href="/"
+              href="/track-order"
               className="px-8 py-3.5 bg-white border border-stone-300 text-stone-800 font-serif text-xs uppercase tracking-widest rounded-xl hover:border-[#072618]"
             >
-              Return to Homepage
+              Public Tracker
             </Link>
           </div>
         </div>
@@ -320,32 +384,62 @@ export default function CheckoutPage() {
 
                 <div className="space-y-3">
                   {[
-                    { key: "UPI", label: "Instant UPI & QR Code (Google Pay, PhonePe, Paytm)", icon: QrCode },
-                    { key: "Credit/Debit Card", label: "Credit / Debit Card (Visa, Mastercard, RuPay, Amex)", icon: CreditCard },
-                    { key: "Net Banking", label: "Net Banking (All Major Indian Banks)", icon: ShieldCheck },
-                    { key: "Cash on Delivery", label: "Cash on Delivery (Verified Pin Codes Only)", icon: Truck }
+                    {
+                      key: "COD" as const,
+                      title: "Cash on Delivery (COD)",
+                      label: "Pay cash or digital scan upon parcel arrival at your doorstep.",
+                      icon: Truck,
+                    },
+                    {
+                      key: "UPI_MANUAL" as const,
+                      title: "Direct UPI Transfer (Manual)",
+                      label: "Pay via Google Pay, PhonePe, or BHIM UPI to LoomLoft atelier VPA.",
+                      icon: QrCode,
+                    },
+                    {
+                      key: "BANK_TRANSFER" as const,
+                      title: "Guild Bank Transfer (NEFT / RTGS)",
+                      label: "Direct transfer to LoomLoft Master Artisan Cooperative account.",
+                      icon: ShieldCheck,
+                    },
                   ].map((method) => {
                     const Icon = method.icon;
                     const isSelected = paymentMethod === method.key;
                     return (
                       <button
                         key={method.key}
-                        onClick={() => setPaymentMethod(method.key as any)}
-                        className={`w-full p-4 rounded-2xl border text-left flex items-center space-x-4 transition-all ${
+                        onClick={() => setPaymentMethod(method.key)}
+                        className={`w-full p-4 rounded-2xl border text-left flex items-center space-x-4 transition-all cursor-pointer ${
                           isSelected
                             ? "border-[#072618] bg-emerald-50/50 shadow-sm"
                             : "border-stone-200 hover:border-stone-400 bg-white"
                         }`}
                       >
-                        <div className={`p-2.5 rounded-xl ${isSelected ? "bg-[#072618] text-[#f5b92e]" : "bg-stone-100 text-stone-600"}`}>
+                        <div
+                          className={`p-2.5 rounded-xl ${
+                            isSelected
+                              ? "bg-[#072618] text-[#f5b92e]"
+                              : "bg-stone-100 text-stone-600"
+                          }`}
+                        >
                           <Icon className="w-5 h-5" />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-serif text-sm font-bold text-stone-900">{method.key}</h4>
-                          <p className="text-[11px] text-stone-500 font-sans mt-0.5">{method.label}</p>
+                          <h4 className="font-serif text-sm font-bold text-stone-900">
+                            {method.title}
+                          </h4>
+                          <p className="text-[11px] text-stone-500 font-sans mt-0.5">
+                            {method.label}
+                          </p>
                         </div>
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected ? "border-[#072618]" : "border-stone-300"}`}>
-                          {isSelected && <div className="w-2 h-2 rounded-full bg-[#072618]" />}
+                        <div
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            isSelected ? "border-[#072618]" : "border-stone-300"
+                          }`}
+                        >
+                          {isSelected && (
+                            <div className="w-2 h-2 rounded-full bg-[#072618]" />
+                          )}
                         </div>
                       </button>
                     );

@@ -1,8 +1,11 @@
 import { Client } from "appwrite";
 
+const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || "https://sgp.cloud.appwrite.io/v1";
+const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || "6abf932900194629e8a4";
+
 const client = new Client()
-  .setEndpoint("https://sgp.cloud.appwrite.io/v1")
-  .setProject("6abf932900194629e8a4");
+  .setEndpoint(endpoint)
+  .setProject(projectId);
 
 export { client };
 

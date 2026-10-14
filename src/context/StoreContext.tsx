@@ -81,7 +81,8 @@ interface StoreContextType {
   
   // Admin Methods
   isAdmin: boolean;
-  adminLogin: (password: string) => boolean;
+  adminEmail: string | null;
+  adminLogin: (emailOrPassword: string, password?: string) => boolean;
   adminLogout: () => void;
   addProduct: (product: Omit<Product, "id">) => void;
   updateProduct: (id: string, updated: Partial<Product>) => void;
@@ -119,6 +120,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [coupons, setCoupons] = useState(INITIAL_COUPONS);
   const [cms, setCms] = useState(CMS_CONTENT);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminEmail, setAdminEmail] = useState<string | null>(null);
 
   // Initialize from LocalStorage if available
   useEffect(() => {
@@ -133,7 +135,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       if (savedRecent) setRecentlyViewed(JSON.parse(savedRecent));
 
       const savedAdmin = localStorage.getItem("loomloft_admin");
-      if (savedAdmin === "true") setIsAdmin(true);
+      if (savedAdmin === "true") {
+        setIsAdmin(true);
+        setAdminEmail(localStorage.getItem("loomloft_admin_email") || "loomloft2026@gmail.com");
+      }
     } catch {
       // LocalStorage unavailable in SSR or private mode
     }
@@ -283,25 +288,48 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const cartShipping = cartSubtotal >= freeShippingThreshold || cartSubtotal === 0 ? 0 : 250;
   const cartTotal = Math.max(0, cartSubtotal - cartDiscount + cartShipping);
 
-  // Admin Methods
-  const adminLogin = (password: string) => {
-    // Standard default admin password for demo/showcase
-    if (password === "loomloft2026" || password === "admin") {
+  // Admin Methods (Client-Side Authentication with loomloft2026@gmail.com & Admin@2026)
+  const adminLogin = (emailOrPassword: string, pass?: string) => {
+    let email = "";
+    let password = "";
+
+    if (pass !== undefined) {
+      email = emailOrPassword.trim().toLowerCase();
+      password = pass.trim();
+    } else {
+      // If single argument, treat as password or passkey
+      password = emailOrPassword.trim();
+      email = "loomloft2026@gmail.com";
+    }
+
+    const isEmailValid = !email || email === "loomloft2026@gmail.com";
+    const isPassValid = password === "Admin@2026" || password === "loomloft2026" || password === "admin";
+
+    if (isEmailValid && isPassValid) {
       setIsAdmin(true);
+      setAdminEmail("loomloft2026@gmail.com");
       try {
         localStorage.setItem("loomloft_admin", "true");
+        localStorage.setItem("loomloft_admin_email", "loomloft2026@gmail.com");
       } catch {}
-      showToast("Welcome back, LoomLoft Master Curator", "success");
+      showToast("Access Granted: Welcome Master Curator", "success");
       return true;
     }
-    showToast("Incorrect security code", "error");
+
+    if (!isEmailValid) {
+      showToast("Invalid email. Please use loomloft2026@gmail.com", "error");
+    } else {
+      showToast("Invalid password. Please use Admin@2026", "error");
+    }
     return false;
   };
 
   const adminLogout = () => {
     setIsAdmin(false);
+    setAdminEmail(null);
     try {
       localStorage.removeItem("loomloft_admin");
+      localStorage.removeItem("loomloft_admin_email");
     } catch {}
     showToast("Logged out of Admin Portal", "info");
   };
@@ -406,6 +434,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         coupons,
         cms,
         isAdmin,
+        adminEmail,
         adminLogin,
         adminLogout,
         addProduct,

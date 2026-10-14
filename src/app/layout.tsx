@@ -1,16 +1,16 @@
+import CartDrawer from "@/components/cart/CartDrawer";
+import CustomCursor from "@/components/layout/CustomCursor";
+import Footer from "@/components/layout/Footer";
+import LoadingScreen from "@/components/layout/LoadingScreen";
+import Navbar from "@/components/layout/Navbar";
+import Toast from "@/components/layout/Toast";
+import WhatsAppButton from "@/components/layout/WhatsAppButton";
+import ProductQuickViewModal from "@/components/products/ProductQuickViewModal";
+import SearchOverlay from "@/components/search/SearchOverlay";
+import { StoreProvider } from "@/context/StoreContext";
+import "@/lib/appwrite";
 import type { Metadata } from "next";
 import "./globals.css";
-import { StoreProvider } from "@/context/StoreContext";
-import LoadingScreen from "@/components/layout/LoadingScreen";
-import CustomCursor from "@/components/layout/CustomCursor";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import CartDrawer from "@/components/cart/CartDrawer";
-import SearchOverlay from "@/components/search/SearchOverlay";
-import ProductQuickViewModal from "@/components/products/ProductQuickViewModal";
-import WhatsAppButton from "@/components/layout/WhatsAppButton";
-import Toast from "@/components/layout/Toast";
-import "@/lib/appwrite";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://loomloft.net"),

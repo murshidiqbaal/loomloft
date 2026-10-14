@@ -3,13 +3,14 @@
 import React, { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { ArrowRight, Check, Sparkles } from "lucide-react";
 import { InstagramIcon, YouTubeIcon, FacebookIcon } from "@/components/icons/BrandIcons";
 import { useStore } from "@/context/StoreContext";
 
 export default function Footer() {
   const router = useRouter();
+  const pathname = usePathname();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const { showToast } = useStore();
@@ -49,6 +50,10 @@ export default function Footer() {
     showToast("Welcome to The Loom circle! 15% code sent.", "success");
     setEmail("");
   };
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <footer className="bg-[#04160d] text-stone-300 border-t border-[#e5a110]/20 pt-16 pb-12 relative overflow-hidden">
