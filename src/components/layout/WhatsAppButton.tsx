@@ -143,7 +143,7 @@ export default function WhatsAppButton() {
     };
   }, [updatePosition]);
 
-  const phoneNumber = "919876543210";
+  const phoneNumber = "918111833849";
   const defaultMessage = encodeURIComponent(
     "Namaste LoomLoft! I am interested in exploring your handcrafted handloom collections and need styling assistance."
   );
@@ -226,8 +226,8 @@ export default function WhatsAppButton() {
               "width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s, box-shadow 0.4s",
           }}
           className={`relative flex items-center justify-center bg-gradient-to-br from-[#072618] to-[#020b06] border border-[#e5a110] text-[#e5a110] hover:border-[#f5b92e] rounded-full cursor-pointer transition-all ${isCovering
-              ? "shadow-[0_12px_36px_rgba(0,0,0,0.95),0_0_24px_rgba(229,161,16,0.35)] ring-1 ring-[#f5b92e]/40"
-              : "shadow-[0_8px_24px_rgba(0,0,0,0.8),0_0_15px_rgba(229,161,16,0.2)]"
+            ? "shadow-[0_12px_36px_rgba(0,0,0,0.95),0_0_24px_rgba(229,161,16,0.35)] ring-1 ring-[#f5b92e]/40"
+            : "shadow-[0_8px_24px_rgba(0,0,0,0.8),0_0_15px_rgba(229,161,16,0.2)]"
             }`}
           aria-label="Contact LoomLoft Stylist on WhatsApp"
         >
@@ -237,8 +237,8 @@ export default function WhatsAppButton() {
           />
           <span
             className={`absolute bg-emerald-400 border-2 border-[#04160d] rounded-full animate-pulse ${isCovering
-                ? "top-2.5 right-2.5 w-3.5 h-3.5"
-                : "top-1.5 right-1.5 w-3 h-3"
+              ? "top-2.5 right-2.5 w-3.5 h-3.5"
+              : "top-1.5 right-1.5 w-3 h-3"
               }`}
           />
         </motion.button>

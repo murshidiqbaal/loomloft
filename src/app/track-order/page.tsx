@@ -1,22 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import {
-  Truck,
-  Search,
-  CheckCircle2,
-  Clock,
-  MapPin,
-  FileText,
-  ExternalLink,
-  ShieldCheck,
   AlertCircle,
-  Package,
   ArrowRight,
-  Sparkles,
+  CheckCircle2,
+  ExternalLink,
+  FileText,
+  MapPin,
+  Package,
+  Search,
+  ShieldCheck,
+  Truck
 } from "lucide-react";
+import React, { useState } from "react";
 
 export default function PublicTrackOrderPage() {
   const [orderNumber, setOrderNumber] = useState("");
@@ -48,7 +44,7 @@ export default function PublicTrackOrderPage() {
       } else {
         setErrorMsg(
           data.message ||
-            "Unable to locate order. Please ensure both Order Number and Email/Phone match your invoice."
+          "Unable to locate order. Please ensure both Order Number and Email/Phone match your invoice."
         );
       }
     } catch {
@@ -122,7 +118,7 @@ export default function PublicTrackOrderPage() {
                     required
                     value={emailOrPhone}
                     onChange={(e) => setEmailOrPhone(e.target.value)}
-                    placeholder="test.customer@example.com or 9876543210"
+                    placeholder="test.customer@example.com or 8111833849"
                     className="w-full pl-10 pr-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#072618]"
                   />
                 </div>
@@ -207,11 +203,10 @@ export default function PublicTrackOrderPage() {
                   return (
                     <div key={milestone.id} className="relative">
                       <div
-                        className={`absolute -left-[30px] top-0.5 w-6 h-6 rounded-full flex items-center justify-center border transition-all ${
-                          isLatest
+                        className={`absolute -left-[30px] top-0.5 w-6 h-6 rounded-full flex items-center justify-center border transition-all ${isLatest
                             ? "bg-[#072618] text-[#f5b92e] border-[#12372a] shadow-md scale-110"
                             : "bg-white text-emerald-600 border-emerald-500"
-                        }`}
+                          }`}
                       >
                         {isLatest ? (
                           <span className="w-2 h-2 rounded-full bg-[#f5b92e] animate-ping" />

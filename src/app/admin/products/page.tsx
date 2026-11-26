@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import Image from "next/image";
 import { useStore } from "@/context/StoreContext";
 import { Product } from "@/data/mockData";
@@ -10,21 +10,23 @@ import {
   Plus,
   Trash2,
   Edit,
-  Eye,
-  Check,
   X,
   Search,
-  SlidersHorizontal,
-  Sparkles
 } from "lucide-react";
+import SupabaseImageUploader, { type StorageImageEntry } from "@/components/admin/SupabaseImageUploader";
+
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=80";
 
 export default function AdminProductsPage() {
-  const { products, addProduct, updateProduct, deleteProduct, showToast } = useStore();
+  const { products, addProduct, updateProduct, deleteProduct } = useStore();
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  // Form State
+  // Supabase image state — managed by SupabaseImageUploader
+  const [storageImages, setStorageImages] = useState<StorageImageEntry[]>([]);
+
   const [form, setForm] = useState({
     name: "",
     sku: "",
@@ -38,15 +40,19 @@ export default function AdminProductsPage() {
     description: "",
     sizes: "XS, S, M, L, XL",
     stock: 12,
-    images: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=80",
     badge: "Masterpiece",
     isFeatured: true,
     isNewArrival: true,
-    isBestSeller: false
+    isBestSeller: false,
   });
+
+  const handleImagesChange = useCallback((imgs: StorageImageEntry[]) => {
+    setStorageImages(imgs);
+  }, []);
 
   const openCreateModal = () => {
     setEditingProduct(null);
+    setStorageImages([]);
     setForm({
       name: "",
       sku: `LL-WEAVE-${Math.floor(100 + Math.random() * 900)}`,
@@ -57,20 +63,32 @@ export default function AdminProductsPage() {
       fabric: "Pure Chanderi Silk with Zari",
       origin: "Pranpur, Chanderi",
       weaveTechnique: "Pit Loom Hand-thrown Shuttle",
-      description: "An authentic handloom creation woven from unadulterated native threads with delicate hand-beaten gold booties.",
+      description:
+        "An authentic handloom creation woven from unadulterated native threads with delicate hand-beaten gold booties.",
       sizes: "XS, S, M, L, XL",
       stock: 15,
-      images: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=80",
       badge: "Artisan Edition",
       isFeatured: true,
       isNewArrival: true,
-      isBestSeller: false
+      isBestSeller: false,
     });
     setModalOpen(true);
   };
 
   const openEditModal = (p: Product) => {
     setEditingProduct(p);
+    // Seed existing product images into the uploader
+    setStorageImages(
+      p.images.map((url, idx) => ({
+        localId: `existing-${idx}-${Date.now()}`,
+        previewUrl: url,
+        publicUrl: url,
+        progress: 100,
+        status: "done" as const,
+        altText: p.name,
+        isPrimary: idx === 0,
+      }))
+    );
     setForm({
       name: p.name,
       sku: p.sku,
@@ -84,11 +102,10 @@ export default function AdminProductsPage() {
       description: p.description,
       sizes: p.sizes.join(", "),
       stock: p.stock,
-      images: p.images.join("\n"),
       badge: p.badge || "",
       isFeatured: !!p.isFeatured,
       isNewArrival: !!p.isNewArrival,
-      isBestSeller: !!p.isBestSeller
+      isBestSeller: !!p.isBestSeller,
     });
     setModalOpen(true);
   };
@@ -97,9 +114,21 @@ export default function AdminProductsPage() {
     e.preventDefault();
     if (!form.name.trim()) return;
 
-    const sizesArr = form.sizes.split(",").map((s) => s.trim()).filter(Boolean);
-    const imagesArr = form.images.split("\n").map((url) => url.trim()).filter(Boolean);
-    const slug = form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    // Collect uploaded image URLs — primary image first
+    const imagesArr = storageImages
+      .filter((img) => img.status === "done" && img.publicUrl)
+      .sort((a, b) => (a.isPrimary ? -1 : b.isPrimary ? 1 : 0))
+      .map((img) => img.publicUrl as string);
+
+    const finalImages = imagesArr.length > 0 ? imagesArr : [FALLBACK_IMAGE];
+    const sizesArr = form.sizes
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const slug = form.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
 
     if (editingProduct) {
       updateProduct(editingProduct.id, {
@@ -108,7 +137,7 @@ export default function AdminProductsPage() {
         sku: form.sku,
         price: Number(form.price),
         originalPrice: Number(form.originalPrice),
-        category: form.category as any,
+        category: form.category as Product["category"],
         collection: form.collection,
         fabric: form.fabric,
         origin: form.origin,
@@ -116,11 +145,11 @@ export default function AdminProductsPage() {
         description: form.description,
         sizes: sizesArr.length ? sizesArr : ["Free Size"],
         stock: Number(form.stock),
-        images: imagesArr.length ? imagesArr : [editingProduct.images[0]],
+        images: finalImages,
         badge: form.badge,
         isFeatured: form.isFeatured,
         isNewArrival: form.isNewArrival,
-        isBestSeller: form.isBestSeller
+        isBestSeller: form.isBestSeller,
       });
     } else {
       addProduct({
@@ -129,7 +158,7 @@ export default function AdminProductsPage() {
         sku: form.sku,
         price: Number(form.price),
         originalPrice: Number(form.originalPrice),
-        category: form.category as any,
+        category: form.category as Product["category"],
         collection: form.collection,
         fabric: form.fabric,
         origin: form.origin,
@@ -142,23 +171,23 @@ export default function AdminProductsPage() {
           artisanNote: "Handcrafted by master guild weavers with zero electric motors.",
           careInstructions: [
             "Specialist dry clean only",
-            "Store wrapped in breathable unbleached muslin"
-          ]
+            "Store wrapped in breathable unbleached muslin",
+          ],
         },
         colors: [
           { name: "Forest", hex: "#072618" },
-          { name: "Gold", hex: "#e5a110" }
+          { name: "Gold", hex: "#e5a110" },
         ],
         sizes: sizesArr.length ? sizesArr : ["Standard"],
         stock: Number(form.stock),
         rating: 5.0,
         reviewCount: 1,
-        images: imagesArr.length ? imagesArr : ["https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=80"],
+        images: finalImages,
         badge: form.badge,
         isFeatured: form.isFeatured,
         isNewArrival: form.isNewArrival,
         isBestSeller: form.isBestSeller,
-        tags: [form.category, form.collection]
+        tags: [form.category, form.collection],
       });
     }
 
@@ -230,28 +259,58 @@ export default function AdminProductsPage() {
                 <tr key={p.id} className="glass-row transition-colors">
                   <td className="py-3 px-4 flex items-center space-x-3">
                     <div className="relative w-11 h-14 rounded-lg overflow-hidden bg-stone-900 shrink-0 border border-white/10 shadow-sm">
-                      <Image src={p.images[0]} alt={p.name} fill className="object-cover" />
+                      <Image
+                        src={p.images[0] || FALLBACK_IMAGE}
+                        alt={p.name}
+                        fill
+                        className="object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
+                        }}
+                      />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="font-serif font-bold text-white text-sm truncate max-w-xs">{p.name}</h4>
-                      <p className="text-[10px] text-stone-400 font-sans truncate max-w-xs">{p.fabric}</p>
+                      <h4 className="font-serif font-bold text-white text-sm truncate max-w-xs">
+                        {p.name}
+                      </h4>
+                      <p className="text-[10px] text-stone-400 font-sans truncate max-w-xs">
+                        {p.fabric}
+                      </p>
                     </div>
                   </td>
                   <td className="py-3 px-4 font-mono text-[#f5b92e] font-semibold">{p.sku}</td>
                   <td className="py-3 px-4 font-serif">{p.category}</td>
-                  <td className="py-3 px-4 font-serif font-bold text-white">{formatPrice(p.price)}</td>
+                  <td className="py-3 px-4 font-serif font-bold text-white">
+                    {formatPrice(p.price)}
+                  </td>
                   <td className="py-3 px-4">
-                    <span className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold ${
-                      p.stock < 10 ? "glass-pill border-amber-500/40 text-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.2)]" : "glass-pill border-emerald-500/30 text-emerald-300"
-                    }`}>
+                    <span
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold ${
+                        p.stock < 10
+                          ? "glass-pill border-amber-500/40 text-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.2)]"
+                          : "glass-pill border-emerald-500/30 text-emerald-300"
+                      }`}
+                    >
                       {p.stock} units
                     </span>
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex gap-1 flex-wrap">
-                      {p.isFeatured && <span className="px-2 py-0.5 rounded glass-pill-gold text-[#f5b92e] text-[9px] font-serif">Featured</span>}
-                      {p.isNewArrival && <span className="px-2 py-0.5 rounded glass-pill text-emerald-300 text-[9px] font-serif">New</span>}
-                      {p.isBestSeller && <span className="px-2 py-0.5 rounded glass-pill text-amber-300 text-[9px] font-serif">Bestseller</span>}
+                      {p.isFeatured && (
+                        <span className="px-2 py-0.5 rounded glass-pill-gold text-[#f5b92e] text-[9px] font-serif">
+                          Featured
+                        </span>
+                      )}
+                      {p.isNewArrival && (
+                        <span className="px-2 py-0.5 rounded glass-pill text-emerald-300 text-[9px] font-serif">
+                          New
+                        </span>
+                      )}
+                      {p.isBestSeller && (
+                        <span className="px-2 py-0.5 rounded glass-pill text-amber-300 text-[9px] font-serif">
+                          Bestseller
+                        </span>
+                      )}
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
@@ -299,7 +358,9 @@ export default function AdminProductsPage() {
 
             <form onSubmit={handleSaveProduct} className="space-y-4">
               <div>
-                <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">Product Title</label>
+                <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">
+                  Product Title
+                </label>
                 <input
                   type="text"
                   required
@@ -312,7 +373,9 @@ export default function AdminProductsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">SKU</label>
+                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">
+                    SKU
+                  </label>
                   <input
                     type="text"
                     required
@@ -322,7 +385,9 @@ export default function AdminProductsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">Loom Stock Units</label>
+                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">
+                    Loom Stock Units
+                  </label>
                   <input
                     type="number"
                     min={1}
@@ -335,7 +400,9 @@ export default function AdminProductsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">Selling Price (₹)</label>
+                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">
+                    Selling Price (₹)
+                  </label>
                   <input
                     type="number"
                     required
@@ -345,7 +412,9 @@ export default function AdminProductsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">Original Price (₹)</label>
+                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">
+                    Original Price (₹)
+                  </label>
                   <input
                     type="number"
                     value={form.originalPrice}
@@ -357,7 +426,9 @@ export default function AdminProductsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">Category</label>
+                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">
+                    Category
+                  </label>
                   <select
                     value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
@@ -372,7 +443,9 @@ export default function AdminProductsPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">Collection</label>
+                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">
+                    Collection
+                  </label>
                   <input
                     type="text"
                     value={form.collection}
@@ -384,7 +457,9 @@ export default function AdminProductsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">Fabric Composition</label>
+                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">
+                    Fabric Composition
+                  </label>
                   <input
                     type="text"
                     value={form.fabric}
@@ -393,7 +468,9 @@ export default function AdminProductsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">Artisan Origin</label>
+                  <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">
+                    Artisan Origin
+                  </label>
                   <input
                     type="text"
                     value={form.origin}
@@ -404,7 +481,9 @@ export default function AdminProductsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">Available Sizes (comma-separated)</label>
+                <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">
+                  Available Sizes (comma-separated)
+                </label>
                 <input
                   type="text"
                   value={form.sizes}
@@ -414,18 +493,27 @@ export default function AdminProductsPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">Image URLs (one per line)</label>
-                <textarea
-                  rows={2}
-                  value={form.images}
-                  onChange={(e) => setForm({ ...form, images: e.target.value })}
-                  className="w-full px-4 py-2 bg-[#04160d] border border-stone-700 rounded-xl text-xs text-white focus:outline-none focus:border-[#e5a110] font-mono text-[11px]"
-                />
-              </div>
+              {/* Supabase Image Uploader */}
+              <SupabaseImageUploader
+                initialImages={storageImages
+                  .filter((i) => i.status === "done" && i.publicUrl)
+                  .map((i) => ({
+                    publicUrl: i.publicUrl!,
+                    storagePath: i.storagePath,
+                    altText: i.altText,
+                    isPrimary: i.isPrimary,
+                  }))}
+                folder="products"
+                entityId={editingProduct?.id}
+                maxImages={8}
+                label="Product Images (Auto-converts to WebP · Stored in Supabase)"
+                onChange={handleImagesChange}
+              />
 
               <div>
-                <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">Artisan Description</label>
+                <label className="block text-xs font-serif uppercase tracking-wider text-stone-300 mb-1">
+                  Artisan Description
+                </label>
                 <textarea
                   rows={3}
                   value={form.description}

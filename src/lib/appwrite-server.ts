@@ -37,15 +37,28 @@ export function getServerAppwrite() {
   };
 }
 
+import { prepareFileForUpload, ensureAppwriteBucket } from "./image-processing";
+
 export interface UploadedTrackingDocument {
   document_url: string;
   document_name: string;
   document_type: string;
   document_file_id: string;
+  converted_to_webp?: boolean;
+}
+
+export interface UploadedMediaResult {
+  url: string;
+  name: string;
+  type: string;
+  file_id: string;
+  converted_to_webp: boolean;
+  size: number;
 }
 
 /**
- * Uploads an optional courier document (PDF, JPG, PNG up to 10MB) to Appwrite Storage.
+ * Uploads an optional courier document (PDF, JPG, PNG, WEBP, etc.) to Appwrite Storage.
+ * Any uploaded image is automatically converted to optimized WebP format before storage.
  * Never stores raw binary in TablesDB.
  */
 export async function uploadTrackingDocument(
@@ -54,27 +67,36 @@ export async function uploadTrackingDocument(
   try {
     if (!file || file.size === 0) return null;
 
-    // Validate size (max 10MB)
-    const MAX_SIZE = 10 * 1024 * 1024;
+    // Validate size (max 15MB)
+    const MAX_SIZE = 15 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
-      throw new Error("File exceeds maximum allowed size of 10MB");
+      throw new Error("File exceeds maximum allowed size of 15MB");
     }
 
     // Validate extension
     const ext = file.name.split(".").pop()?.toLowerCase() || "";
-    const allowed = ["pdf", "jpg", "jpeg", "png"];
+    const allowed = ["pdf", "jpg", "jpeg", "png", "webp", "gif", "avif", "tiff", "bmp"];
     if (!allowed.includes(ext)) {
-      throw new Error(`Invalid file type .${ext}. Allowed formats: PDF, JPG, PNG.`);
+      throw new Error(`Invalid file type .${ext}. Allowed formats: PDF, JPG, PNG, WEBP.`);
     }
+
+    // Automatically convert any image to WebP before uploading
+    const {
+      file: processedFile,
+      isWebpConverted,
+    } = await prepareFileForUpload(file);
 
     const { endpoint, projectId } = getServerAppwrite();
     const currentApiKey = process.env.APPWRITE_API_KEY || apiKey;
     const fileId = ID.unique();
 
+    // Ensure bucket exists before upload
+    await ensureAppwriteBucket(TRACKING_BUCKET_ID, "Courier Tracking Documents");
+
     // Use native multipart upload to Appwrite Storage
     const formData = new FormData();
     formData.append("fileId", fileId);
-    formData.append("file", file);
+    formData.append("file", processedFile);
     formData.append("permissions[]", 'read("any")');
 
     const uploadRes = await fetch(`${endpoint}/storage/buckets/${TRACKING_BUCKET_ID}/files`, {
@@ -100,12 +122,78 @@ export async function uploadTrackingDocument(
 
     return {
       document_url: documentUrl,
-      document_name: file.name,
-      document_type: file.type || (ext === "pdf" ? "application/pdf" : `image/${ext}`),
+      document_name: processedFile.name,
+      document_type: processedFile.type,
       document_file_id: finalFileId,
+      converted_to_webp: isWebpConverted,
     };
   } catch (error: any) {
     console.error("Failed to upload courier document:", error);
     throw error;
   }
+}
+
+/**
+ * General purpose media uploader for website assets (products, collections, reviews, etc.).
+ * Automatically converts any uploaded image to optimized WebP format before uploading to Appwrite Storage.
+ */
+export async function uploadMediaFile(
+  file: File,
+  bucketId: string = TRACKING_BUCKET_ID
+): Promise<UploadedMediaResult> {
+  if (!file || file.size === 0) {
+    throw new Error("No file provided for upload");
+  }
+
+  const MAX_SIZE = 25 * 1024 * 1024; // 25MB
+  if (file.size > MAX_SIZE) {
+    throw new Error("File exceeds maximum allowed size of 25MB");
+  }
+
+  // Convert any image to WebP format
+  const {
+    file: processedFile,
+    isWebpConverted,
+    finalSize,
+  } = await prepareFileForUpload(file);
+
+  const { endpoint, projectId } = getServerAppwrite();
+  const currentApiKey = process.env.APPWRITE_API_KEY || apiKey;
+  const fileId = ID.unique();
+
+  // Ensure storage bucket is available
+  await ensureAppwriteBucket(bucketId, "Website Media Storage");
+
+  const formData = new FormData();
+  formData.append("fileId", fileId);
+  formData.append("file", processedFile);
+  formData.append("permissions[]", 'read("any")');
+
+  const uploadRes = await fetch(`${endpoint}/storage/buckets/${bucketId}/files`, {
+    method: "POST",
+    headers: {
+      "X-Appwrite-Project": projectId,
+      "X-Appwrite-Key": currentApiKey,
+    },
+    body: formData,
+  });
+
+  if (!uploadRes.ok) {
+    const errText = await uploadRes.text();
+    console.error("Appwrite storage upload error:", errText);
+    throw new Error(`Failed to upload media to Appwrite Storage: ${uploadRes.statusText}`);
+  }
+
+  const uploaded = await uploadRes.json();
+  const finalFileId = uploaded.$id || fileId;
+  const fileUrl = `${endpoint}/storage/buckets/${bucketId}/files/${finalFileId}/view?project=${projectId}`;
+
+  return {
+    url: fileUrl,
+    name: processedFile.name,
+    type: processedFile.type,
+    file_id: finalFileId,
+    converted_to_webp: isWebpConverted,
+    size: finalSize,
+  };
 }

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { Mail, Phone, MapPin, MessageCircle, Clock, Sparkles, Send, CheckCircle2 } from "lucide-react";
 import { InstagramIcon } from "@/components/icons/BrandIcons";
 import { useStore } from "@/context/StoreContext";
+import { CheckCircle2, Clock, Mail, MessageCircle, Phone, Send, Sparkles } from "lucide-react";
+import React, { useState } from "react";
 
 export default function ContactPage() {
   const { showToast } = useStore();
@@ -63,7 +63,7 @@ export default function ContactPage() {
                   <Phone className="w-5 h-5 text-[#072618] shrink-0 mt-0.5" />
                   <div>
                     <span className="font-serif font-bold text-stone-900 block">Phone Support</span>
-                    <a href="tel:+919876543210" className="text-stone-600 hover:text-[#072618]">
+                    <a href="tel:+918111833849" className="text-stone-600 hover:text-[#072618]">
                       +91 (080) 4920 1888
                     </a>
                   </div>
@@ -74,7 +74,7 @@ export default function ContactPage() {
                   <div>
                     <span className="font-serif font-bold text-stone-900 block">WhatsApp Styling Help</span>
                     <a
-                      href="https://wa.me/919876543210"
+                      href="https://wa.me/918111833849"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-emerald-700 font-semibold hover:underline"

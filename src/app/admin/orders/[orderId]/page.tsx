@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import { OrderRecord, OrderStatus, TrackingUpdateRecord, isValidTransition } from "@/types/ecommerce";
+import { convertFileToWebP } from "@/lib/client-image-converter";
 import {
   ArrowLeft,
   Truck,
@@ -51,6 +52,8 @@ export default function AdminOrderDetailPage({
   const [expectedDelivery, setExpectedDelivery] = useState("");
   const [overrideReason, setOverrideReason] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [convertingWebp, setConvertingWebp] = useState(false);
+  const [isConvertedToWebp, setIsConvertedToWebp] = useState(false);
 
   const fetchOrder = async () => {
     setLoading(true);
@@ -709,28 +712,44 @@ export default function AdminOrderDetailPage({
                       Optional Courier Document
                     </span>
                   </div>
-                  <span className="text-[10px] text-stone-400">PDF, JPG, PNG &bull; Max 10MB</span>
+                  <span className="text-[10px] text-stone-400">PDF, JPG, PNG, WEBP &bull; Max 15MB</span>
                 </div>
 
                 <p className="text-[11px] text-stone-400 font-sans">
-                  Upload courier consignment receipt, dispatch receipt, or hub scan slip. Will be saved to Appwrite Storage bucket &quot;tracking-documents&quot;.
+                  Upload courier consignment receipt, dispatch receipt, or hub scan slip. Images are automatically converted to optimized WebP format before being uploaded to Appwrite Storage bucket &quot;tracking-documents&quot;.
                 </p>
 
                 <div className="flex items-center space-x-3 pt-1">
                   <input
                     type="file"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) {
-                        setSelectedFile(e.target.files[0]);
+                    accept=".pdf,.jpg,.jpeg,.png,.webp,image/*"
+                    disabled={convertingWebp}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setConvertingWebp(true);
+                        try {
+                          const { file: processedFile, converted } = await convertFileToWebP(file);
+                          setSelectedFile(processedFile);
+                          setIsConvertedToWebp(converted);
+                        } catch (err) {
+                          console.error("Error preparing file:", err);
+                          setSelectedFile(file);
+                          setIsConvertedToWebp(false);
+                        } finally {
+                          setConvertingWebp(false);
+                        }
                       }
                     }}
-                    className="text-xs text-stone-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-serif file:uppercase file:bg-[#e5a110]/20 file:text-[#f5b92e] hover:file:bg-[#e5a110]/40 cursor-pointer"
+                    className="text-xs text-stone-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-serif file:uppercase file:bg-[#e5a110]/20 file:text-[#f5b92e] hover:file:bg-[#e5a110]/40 cursor-pointer disabled:opacity-50"
                   />
                   {selectedFile && (
                     <button
                       type="button"
-                      onClick={() => setSelectedFile(null)}
+                      onClick={() => {
+                        setSelectedFile(null);
+                        setIsConvertedToWebp(false);
+                      }}
                       className="text-[11px] text-rose-400 hover:underline"
                     >
                       Clear
@@ -738,10 +757,24 @@ export default function AdminOrderDetailPage({
                   )}
                 </div>
 
-                {selectedFile && (
-                  <span className="text-[11px] text-emerald-400 font-mono block">
-                    Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)
+                {convertingWebp && (
+                  <span className="text-[11px] text-[#f5b92e] animate-pulse flex items-center gap-1 font-mono">
+                    <RefreshCw className="w-3 h-3 animate-spin" />
+                    Converting image to WebP format...
                   </span>
+                )}
+
+                {selectedFile && !convertingWebp && (
+                  <div className="flex items-center gap-2 pt-0.5">
+                    <span className="text-[11px] text-emerald-400 font-mono block">
+                      Ready: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)
+                    </span>
+                    {isConvertedToWebp && (
+                      <span className="px-1.5 py-0.5 bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 rounded text-[9px] font-mono uppercase tracking-wider">
+                        WebP Optimized
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
 
